@@ -1,0 +1,36 @@
+[
+  {
+    "image": "california",
+    "description": "켈리포니아 : 여행유의",
+    "children" : [
+      {
+        "image" : "california_1",
+        "description": "요세미티 국립 공원"
+      },
+      {
+        "image": "california_2",
+        "description": "유니버셜 스튜디오"
+      }
+    ]
+  },
+  {
+    "image": "nevada",
+    "description": "네바다 : 여행유의",
+    "children": []
+  },
+  {
+    "image": "oregon",
+    "description": "오리건 : 여행유의",
+    "children": []
+  },
+  {
+    "image": "texas",
+    "description": "텍사스 : 여행유의",
+    "children": []
+  },
+  {
+    "image": "utah",
+    "description": "유타 : 여행유의",
+    "children": []
+  }
+]
