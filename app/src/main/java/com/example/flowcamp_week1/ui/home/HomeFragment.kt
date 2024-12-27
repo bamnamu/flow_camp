@@ -9,6 +9,10 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import com.example.flowcamp_week1.databinding.FragmentHomeBinding
 
+/*
+* git test!!
+* */
+
 class HomeFragment : Fragment() {
 
     private var _binding: FragmentHomeBinding? = null
