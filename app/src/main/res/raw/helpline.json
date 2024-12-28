@@ -1,6 +1,6 @@
 [
   {
-    "imageResId": "call_911.png",
+    "imageResId": "call_911",
     "title": "응급상황",
     "bulletList": [
       "경찰, 소방, 의료 서비스",
@@ -10,7 +10,7 @@
   },
 
   {
-    "imageResId": "youngsacallcenter.png",
+    "imageResId": "youngsacallcenter",
     "title": "영사콜센터",
     "bulletList": [
       "해외 위난 발생 시 가족 등의 안전확인 접수 및 현지 안전정보 안내",
@@ -23,7 +23,7 @@
   },
 
   {
-    "imageResId": "youngsacallcenter.png",
+    "imageResId": "youngsacallcenter",
     "title": "영사긴급전화",
     "bulletList": [
       "영사관의 도움이 필요한 긴급 상황"
@@ -32,7 +32,7 @@
   },
 
   {
-    "imageResId": "us.png",
+    "imageResId": "us",
     "title": "주미국대한민국 대사관 대표전화",
     "bulletList": [
       "여권 분실, 도난 시 임시 여권이나 여행 증명서 발급",
@@ -45,7 +45,7 @@
   },
 
   {
-    "imageResId": "us.png",
+    "imageResId": "us",
     "title": "주미국대한민국 대사관 긴급전화",
     "bulletList": [
       "대사관의 도움이 필요한 긴급상황"
