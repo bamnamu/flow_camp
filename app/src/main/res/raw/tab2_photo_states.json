@@ -5,11 +5,13 @@
     "children" : [
       {
         "image" : "california_1",
-        "description": "요세미티 국립 공원"
+        "description": "요세미티 국립 공원",
+        "children": []
       },
       {
         "image": "california_2",
-        "description": "유니버셜 스튜디오"
+        "description": "유니버셜 스튜디오",
+        "children": []
       }
     ]
   },

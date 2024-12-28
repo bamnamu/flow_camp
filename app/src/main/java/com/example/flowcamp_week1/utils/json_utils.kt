@@ -2,8 +2,9 @@ package com.example.flowcamp_week1.utils
 
 import android.content.Context
 import com.google.gson.Gson
-import com.google.gson.reflect.TypeToken
+//import com.google.gson.reflect.TypeToken
 import com.example.flowcamp_week1.R
+import com.google.firebase.crashlytics.buildtools.reloc.com.google.common.reflect.TypeToken
 
 // 데이터 클래스
 data class tab2_data_tree(
