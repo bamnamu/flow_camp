@@ -4,35 +4,50 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.TextView
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.ViewModelProvider
+import androidx.recyclerview.widget.GridLayoutManager
 import com.example.flowcamp_week1.databinding.FragmentDashboardBinding
+import com.example.flowcamp_week1.utils.loadPhotoData
+import com.example.flowcamp_week1.utils.tab2_data_tree
 
 class DashboardFragment : Fragment() {
 
     private var _binding: FragmentDashboardBinding? = null
-
-    // This property is only valid between onCreateView and
-    // onDestroyView.
     private val binding get() = _binding!!
+
+    private var currentPhotoData: List<tab2_data_tree> = emptyList()
 
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        val dashboardViewModel =
-            ViewModelProvider(this).get(DashboardViewModel::class.java)
-
         _binding = FragmentDashboardBinding.inflate(inflater, container, false)
-        val root: View = binding.root
+        return binding.root
+    }
 
-        val textView: TextView = binding.textDashboard
-        dashboardViewModel.text.observe(viewLifecycleOwner) {
-            textView.text = it
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+
+        // JSON 데이터 로드
+        val allPhotoData = loadPhotoData(requireContext()) // JSON 데이터를 로드
+        currentPhotoData = allPhotoData // 최상위 데이터로 초기화
+
+        // RecyclerView 초기화
+        setupRecyclerView(currentPhotoData)
+    }
+
+    private fun setupRecyclerView(photoData: List<tab2_data_tree>) {
+        val recyclerView = binding.recyclerView
+        recyclerView.layoutManager = GridLayoutManager(requireContext(), 2)
+
+        // RecyclerView 어댑터 설정
+        recyclerView.adapter = PhotoAdapter(photoData) { children ->
+            if (children.isNotEmpty()) {
+                currentPhotoData = children
+                setupRecyclerView(children)
+            }
         }
-        return root
     }
 
     override fun onDestroyView() {
