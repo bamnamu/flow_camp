@@ -26,7 +26,8 @@
         android:layout_marginStart="8dp"
         android:textSize="20sp"
         android:textStyle="bold"
-        android:layout_toEndOf="@id/helpline_image" />
+        android:layout_toEndOf="@id/helpline_image"
+        android:fontFamily="@font/nanumgothic"/>
 
     <!--bullet list-->
     <LinearLayout
@@ -48,7 +49,8 @@
         android:textStyle="bold"
         android:layout_marginStart="8dp"
         android:layout_below="@id/helpline_bullet_list"
-        android:layout_toEndOf="@id/helpline_image" />
+        android:layout_toEndOf="@id/helpline_image"
+        android:fontFamily="@font/cutenumber"/>
 
 
 </RelativeLayout>
