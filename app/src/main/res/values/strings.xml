@@ -2,5 +2,5 @@
     <string name="app_name">flowcamp_week1</string>
     <string name="title_home">Helplines</string>
     <string name="title_dashboard">Attractions</string>
-    <string name="title_notifications">Notifications</string>
+    <string name="title_notifications">Utilities</string>
 </resources>

@@ -1,22 +1,78 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    tools:context=".ui.home.HomeFragment"
+    android:paddingLeft="16dp"
+    android:paddingRight="16dp"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".ui.notifications.NotificationsFragment">
+    android:layout_marginBottom="56dp"
+    android:clipToPadding="false">
 
-    <TextView
-        android:id="@+id/text_notifications"
+<!--    카드 배경-->
+    <androidx.cardview.widget.CardView
+        android:id="@+id/conversion_card"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginStart="8dp"
-        android:layout_marginTop="8dp"
-        android:layout_marginEnd="8dp"
-        android:textAlignment="center"
-        android:textSize="20sp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
-</androidx.constraintlayout.widget.ConstraintLayout>
+        android:layout_marginTop="100dp"
+        android:layout_marginBottom="16dp"
+        android:layout_marginLeft="16dp"
+        android:layout_marginRight="16dp"
+        android:layout_centerHorizontal="true"
+        app:cardCornerRadius="16dp"
+        app:cardElevation="8dp"
+        android:background="@android:color/white">
+
+        <RelativeLayout
+            android:layout_width="wrap_content"
+            android:layout_height="204dp"
+            android:padding="16dp">
+
+            <!--            원 입력-->
+            <EditText
+                android:id="@+id/won_input"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentStart="true"
+                android:layout_centerVertical="true"
+                android:layout_marginRight="8dp"
+                android:autofillHints="0"
+                android:background="@null"
+                android:gravity="center"
+                android:hint="원"
+                android:inputType="numberDecimal"
+                android:textSize="24sp" />
+
+            <!--            달러 입력-->
+            <EditText
+                android:id="@+id/dollar_input"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentEnd="true"
+                android:layout_centerVertical="true"
+                android:layout_marginLeft="8dp"
+                android:autofillHints="0"
+                android:background="@null"
+                android:gravity="center"
+                android:hint="달러"
+                android:inputType="numberDecimal"
+                android:textSize="24sp" />
+
+            <!--            구분선-->
+            <View
+                android:id="@+id/exchange_rate_display"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/won_input"
+                android:layout_marginTop="16dp"
+                android:gravity="center"
+                android:text="1 원당 0.00075 달러"
+                android:textColor="#3DA5F6"
+                android:textSize="16sp"
+                android:textStyle="bold" />
+
+        </RelativeLayout>
+    </androidx.cardview.widget.CardView>
+</RelativeLayout>
