@@ -37,6 +37,7 @@ android {
     }
     buildFeatures {
         viewBinding = true
+        dataBinding = true
     }
 }
 
@@ -54,6 +55,7 @@ dependencies {
     implementation(libs.androidx.cardview)
     implementation(libs.kotlinx.serialization.json)
     implementation(libs.gson)
+    implementation(libs.firebase.crashlytics.buildtools)
     implementation(libs.room.runtime) // Room Runtime
     implementation(libs.room.ktx)    // Kotlin Extensions for Room
     testImplementation(libs.junit)

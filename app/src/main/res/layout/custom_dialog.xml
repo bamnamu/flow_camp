@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <RelativeLayout
+        android:id="@+id/view"
+        android:layout_width="286dp"
+        android:layout_height="178dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <!--팝업제목-->
+        <TextView
+            android:id="@+id/dialog_title"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="전화걸기"
+            android:textStyle="bold"
+            android:textSize="16sp"
+            android:gravity="start"
+            android:paddingStart="8dp"
+            android:paddingBottom="8dp"
+            android:paddingTop="16dp"
+            tools:ignore="RtlSymmetry" />
+
+        <!--팝업 메시지(전화번호)-->
+        <TextView
+            android:id="@+id/dialog_contact"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="(contact)"
+            android:textSize="25sp"
+            android:layout_centerInParent="true"
+            android:gravity="center"
+            android:paddingBottom="16dp"
+            android:fontFamily="@font/cutenumber"/>
+
+        <!--확인버튼-->
+
+        <!--취소버튼-->
+
+        <TextView
+            android:id="@+id/dialog_confirm"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentEnd="true"
+            android:layout_alignParentBottom="true"
+            android:layout_marginEnd="48dp"
+            android:layout_marginBottom="10dp"
+            android:layout_toStartOf="@id/dialog_cancel"
+            android:padding="12dp"
+            android:text="확인"
+            android:textStyle="bold" />
+
+        <TextView
+            android:id="@+id/dialog_cancel"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentRight="true"
+            android:layout_alignParentBottom="true"
+            android:layout_marginEnd="16dp"
+            android:layout_marginBottom="22dp"
+            android:text="취소"
+            android:textStyle="bold" />
+
+    </RelativeLayout>
+</androidx.constraintlayout.widget.ConstraintLayout>
