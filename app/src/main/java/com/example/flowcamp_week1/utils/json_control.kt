@@ -53,3 +53,32 @@ fun getChildrenByParentId(context: Context, fileName: String, parentId: Int): Li
 
     return currentData.filter { it.parent_id == parentId } // parent_id로 필터링
 }
+
+// 주와 관광지를 구분하여 extrainfo 처리
+fun processPhotoData(context: Context, fileName: String): List<tab2_data_tree> {
+    val jsonString = context.readJsonFile(fileName)
+    val currentData = Json.decodeFromString<List<tab2_data_tree>>(jsonString)
+
+    return currentData.map { photo ->
+        if (photo.parent_id == 0) {
+            photo.copy(extrainfo = photo.extrainfo.ifBlank { "여행유의" })
+        } else {
+            photo.copy(extrainfo = photo.extrainfo.ifBlank { "주소를 입력하세요." })
+        }
+    }
+}
+
+// 특정 항목의 extrainfo 수정
+fun updatePhotoInfo(context: Context, fileName: String, photoId: Int, newExtraInfo: String) {
+    val jsonString = context.readJsonFile(fileName)
+    val currentData = Json.decodeFromString<List<tab2_data_tree>>(jsonString)
+
+    val updatedData = currentData.map { photo ->
+        if (photo.id == photoId) {
+            photo.copy(extrainfo = newExtraInfo)
+        } else {
+            photo
+        }
+    }
+    context.saveJsonFile(fileName, updatedData) // 수정된 데이터 저장
+}

@@ -62,8 +62,8 @@ class DashboardFragment : Fragment() {
             copyRawJsonToInternal(requireContext(), R.raw.tab2_photo_states, fileName)
         }
 
-        // 내부 저장소에서 JSON 파일 로드
-        allPhotoData = loadPhotoDataFromInternal()
+        // 내부 저장소에서 JSON 파일 로드 및 데이터 처리
+        allPhotoData = processPhotoData(requireContext(), fileName)
         currentPhotoData = allPhotoData.filter { it.parent_id == 0 } // parent_id가 0인 주만 표시
         showPhotoData(currentPhotoData)
 
@@ -94,11 +94,17 @@ class DashboardFragment : Fragment() {
         binding.recyclerView.layoutManager = GridLayoutManager(requireContext(), 2)
         binding.recyclerView.adapter = PhotoAdapter(photoData,
             onPhotoClick = { clickedItem ->
-                val children = allPhotoData.filter { it.parent_id == clickedItem.id } // 자식 항목 필터링
-                if (children.isNotEmpty()) {
-                    parentDataStack.add(currentPhotoData) // 현재 데이터 스택에 저장
-                    currentPhotoData = children
-                    showPhotoData(children) // 자식 항목 표시
+                if (clickedItem.parent_id != 0) {
+                    // 관광지 클릭 시
+                    showMapDialog(clickedItem)
+                } else {
+                    // 주 클릭 시
+                    val children = allPhotoData.filter { it.parent_id == clickedItem.id }
+                    if (clickedItem.parent_id==0) {
+                        parentDataStack.add(currentPhotoData) // 현재 데이터 스택에 저장
+                        currentPhotoData = children
+                        showPhotoData(children) // 자식 항목 표시
+                    }
                 }
             },
             onPhotoLongClick = { clickedItem ->
@@ -125,6 +131,7 @@ class DashboardFragment : Fragment() {
     private fun showAddPhotoDialog() {
         val dialogView = LayoutInflater.from(requireContext()).inflate(R.layout.dialog_add_photo, null)
         val descriptionEditText = dialogView.findViewById<EditText>(R.id.editTextDescription)
+        val extraInfoEditText = dialogView.findViewById<EditText>(R.id.editTextExtraInfo) // extrainfo 입력 필드 추가
         val imageView = dialogView.findViewById<ImageView>(R.id.imageViewSelected)
 
         selectedImageView = imageView // 선택한 ImageView 참조 저장
@@ -139,6 +146,7 @@ class DashboardFragment : Fragment() {
             .setView(dialogView)
             .setPositiveButton("완료") { dialog, _ ->
                 val description = descriptionEditText.text.toString()
+                val extraInfo = extraInfoEditText.text.toString()
 
                 if (selectedImageUri != null && description.isNotBlank()) {
                     val fileName = "image_${System.currentTimeMillis()}.png"
@@ -148,13 +156,13 @@ class DashboardFragment : Fragment() {
                         id = allPhotoData.size + 1, // 고유 ID 생성
                         image = imagePath, // 내부 저장소 경로 저장
                         description = description,
-                        parent_id = if (parentDataStack.isNotEmpty()) parentDataStack.last().first().id else 0
+                        parent_id = if (parentDataStack.isNotEmpty()) parentDataStack.last().first().id else 0,
+                        extrainfo = extraInfo.ifBlank { if (parentDataStack.isEmpty()) "여행유의" else "주소를 입력하세요." }
                     )
                     allPhotoData = allPhotoData + newPhoto // 전체 데이터 업데이트
                     savePhotoDataToInternal(allPhotoData) // 내부 저장소에 저장
                     currentPhotoData = currentPhotoData + newPhoto // 현재 데이터 업데이트
                     showPhotoData(currentPhotoData) // RecyclerView 업데이트
-                    Log.d("DEBUG", "Saved JSON Data: ${Json.encodeToString(allPhotoData)}")
                 } else {
                     Toast.makeText(requireContext(), "이미지와 설명을 모두 입력하세요.", Toast.LENGTH_SHORT).show()
                 }
@@ -163,6 +171,31 @@ class DashboardFragment : Fragment() {
             .setNegativeButton("취소") { dialog, _ -> dialog.dismiss() }
             .create()
             .show()
+    }
+
+    private fun showMapDialog(photo: tab2_data_tree) {
+        AlertDialog.Builder(requireContext())
+            .setTitle("지도와 연결")
+            .setMessage("이 관광지를 지도에서 확인하시겠습니까?")
+            .setPositiveButton("연결") { _, _ ->
+                openMap(photo.extrainfo)
+            }
+            .setNegativeButton("취소") { dialog, _ ->
+                dialog.dismiss()
+            }
+            .create()
+            .show()
+    }
+
+    private fun openMap(address: String) {
+        try {
+            val uri = Uri.parse("geo:0,0?q=${Uri.encode(address)}")
+            val intent = Intent(Intent.ACTION_VIEW, uri)
+            intent.setPackage("com.google.android.apps.maps")
+            startActivity(intent)
+        } catch (e: Exception) {
+            Toast.makeText(requireContext(), "지도를 열 수 없습니다.", Toast.LENGTH_SHORT).show()
+        }
     }
 
     private fun showDeleteDialog(photo: tab2_data_tree) {
