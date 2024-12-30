@@ -3,7 +3,7 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    tools:context=".ui.home.HomeFragment"
+    tools:context=".ui.notifications.NotificationsFragment"
     android:paddingLeft="16dp"
     android:paddingRight="16dp"
     android:layout_width="match_parent"
@@ -12,11 +12,12 @@
     android:clipToPadding="false">
 
 <!--    카드 배경-->
+
     <androidx.cardview.widget.CardView
         android:id="@+id/conversion_card"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="100dp"
+        android:layout_marginTop="50dp"
         android:layout_marginBottom="16dp"
         android:layout_marginLeft="16dp"
         android:layout_marginRight="16dp"
@@ -27,7 +28,7 @@
 
         <RelativeLayout
             android:layout_width="wrap_content"
-            android:layout_height="204dp"
+            android:layout_height="205dp"
             android:padding="16dp">
 
             <!--            원 입력-->
@@ -61,14 +62,14 @@
                 android:textSize="24sp" />
 
             <!--            구분선-->
-            <View
+            <TextView
                 android:id="@+id/exchange_rate_display"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_below="@id/won_input"
-                android:layout_marginTop="16dp"
+                android:layout_marginTop="17dp"
                 android:gravity="center"
-                android:text="1 원당 0.00075 달러"
+                android:text="1달러 당 N원"
                 android:textColor="#3DA5F6"
                 android:textSize="16sp"
                 android:textStyle="bold" />
