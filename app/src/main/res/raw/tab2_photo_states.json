@@ -1,56 +1,374 @@
 [
-    {
-      "id": 1,
-      "image": "california",
-      "description": "켈리포니아 : 여행유의",
-      "parent_id": 0
-    },
-    {
-      "id": 2,
-      "image": "california_1",
-      "description": "요세미티 국립 공원",
-      "parent_id": 1
-    },
-    {
-      "id": 3,
-      "image": "california_2",
-      "description": "유니버셜 스튜디오",
-      "parent_id": 1
-    },
-    {
-      "id": 4,
-      "image": "nevada",
-      "description": "네바다 : 여행유의",
-      "parent_id": 0
-    },
-    {
-      "id": 5,
-      "image": "oregon",
-      "description": "오리건 : 여행유의",
-      "parent_id": 0
-    },
-    {
-      "id": 6,
-      "image": "texas",
-      "description": "텍사스 : 여행유의",
-      "parent_id": 0
-    },
-    {
-      "id": 7,
-      "image": "texas_1",
-      "description": "케마 보드워크",
-      "parent_id": 6
-    },
-    {
-      "id": 8,
-      "image": "texas_2",
-      "description": "선댄스 광장",
-      "parent_id": 6
-    },
-    {
-      "id": 9,
-      "image": "utah",
-      "description": "유타 : 여행유의",
-      "parent_id": 0
-    }
+  {
+    "id": 1,
+    "image": "california",
+    "description": "켈리포니아 : 여행유의",
+    "parent_id": 0
+  },
+  {
+    "id": 2,
+    "image": "california_1",
+    "description": "요세미티 국립 공원",
+    "parent_id": 1
+  },
+  {
+    "id": 3,
+    "image": "california_2",
+    "description": "유니버셜 스튜디오",
+    "parent_id": 1
+  },
+  {
+    "id": 4,
+    "image": "nevada",
+    "description": "네바다 : 여행유의",
+    "parent_id": 0
+  },
+  {
+    "id": 5,
+    "image": "oregon",
+    "description": "오리건 : 여행유의",
+    "parent_id": 0
+  },
+  {
+    "id": 6,
+    "image": "texas",
+    "description": "텍사스 : 여행유의",
+    "parent_id": 0
+  },
+  {
+    "id": 7,
+    "image": "texas_1",
+    "description": "케마 보드워크",
+    "parent_id": 6
+  },
+  {
+    "id": 8,
+    "image": "texas_2",
+    "description": "선댄스 광장",
+    "parent_id": 6
+  },
+  {
+    "id": 9,
+    "image": "utah",
+    "description": "유타 : 여행유의",
+    "parent_id": 0
+  },
+  {
+    "id": 10,
+    "image": "alabama",
+    "description": "앨라배마 : 여행유의",
+    "parent_id": 0
+  },
+  {
+    "id": 11,
+    "image": "alaska",
+    "description": "알래스카 : 여행유의",
+    "parent_id": 0
+  },
+  {
+    "id": 12,
+    "image": "arizona",
+    "description": "애리조나 : 여행유의",
+    "parent_id": 0
+  },
+  {
+    "id": 13,
+    "image": "arkansas",
+    "description": "아칸소 : 여행유의",
+    "parent_id": 0
+  },
+  {
+    "id": 14,
+    "image": "colorado",
+    "description": "콜로라도 : 여행유의",
+    "parent_id": 0
+  },
+  {
+    "id": 15,
+    "image": "connecticut",
+    "description": "코네티컷 : 여행유의",
+    "parent_id": 0
+  },
+  {
+    "id": 16,
+    "image": "delaware",
+    "description": "델라웨어 : 여행유의",
+    "parent_id": 0
+  },
+  {
+    "id": 17,
+    "image": "florida",
+    "description": "플로리다 : 여행유의",
+    "parent_id": 0
+  },
+  {
+    "id": 18,
+    "image": "georgia",
+    "description": "조지아 : 여행유의",
+    "parent_id": 0
+  },
+  {
+    "id": 19,
+    "image": "hawaii",
+    "description": "하와이 : 여행유의",
+    "parent_id": 0
+  },
+  {
+    "id": 20,
+    "image": "idaho",
+    "description": "아이다호 : 여행유의",
+    "parent_id": 0
+  },
+  {
+    "id": 21,
+    "image": "illinois",
+    "description": "일리노이 : 여행유의",
+    "parent_id": 0
+  },
+  {
+    "id": 22,
+    "image": "indiana",
+    "description": "인디애나 : 여행유의",
+    "parent_id": 0
+  },
+  {
+    "id": 23,
+    "image": "iowa",
+    "description": "아이오와 : 여행유의",
+    "parent_id": 0
+  },
+  {
+    "id": 24,
+    "image": "kansas",
+    "description": "캔자스 : 여행유의",
+    "parent_id": 0
+  },
+  {
+    "id": 25,
+    "image": "kentucky",
+    "description": "켄터키 : 여행유의",
+    "parent_id": 0
+  },
+  {
+    "id": 26,
+    "image": "louisiana",
+    "description": "루이지애나 : 여행유의",
+    "parent_id": 0
+  },
+  {
+    "id": 27,
+    "image": "maine",
+    "description": "메인 : 여행유의",
+    "parent_id": 0
+  },
+  {
+    "id": 28,
+    "image": "maryland",
+    "description": "메릴랜드 : 여행유의",
+    "parent_id": 0
+  },
+  {
+    "id": 29,
+    "image": "massachusetts",
+    "description": "매사추세츠 : 여행유의",
+    "parent_id": 0
+  },
+  {
+    "id": 30,
+    "image": "michigan",
+    "description": "미시간 : 여행유의",
+    "parent_id": 0
+  },
+  {
+    "id": 31,
+    "image": "minnesota",
+    "description": "미네소타 : 여행유의",
+    "parent_id": 0
+  },
+  {
+    "id": 32,
+    "image": "mississippi",
+    "description": "미시시피 : 여행유의",
+    "parent_id": 0
+  },
+  {
+    "id": 33,
+    "image": "missouri",
+    "description": "미주리 : 여행유의",
+    "parent_id": 0
+  },
+  {
+    "id": 34,
+    "image": "montana",
+    "description": "몬태나 : 여행유의",
+    "parent_id": 0
+  },
+  {
+    "id": 35,
+    "image": "nebraska",
+    "description": "네브래스카 : 여행유의",
+    "parent_id": 0
+  },
+  {
+    "id": 36,
+    "image": "new_hampshire",
+    "description": "뉴햄프셔 : 여행유의",
+    "parent_id": 0
+  },
+  {
+    "id": 37,
+    "image": "new_jersey",
+    "description": "뉴저지 : 여행유의",
+    "parent_id": 0
+  },
+  {
+    "id": 38,
+    "image": "new_mexico",
+    "description": "뉴멕시코 : 여행유의",
+    "parent_id": 0
+  },
+  {
+    "id": 39,
+    "image": "new_york",
+    "description": "뉴욕 : 여행유의",
+    "parent_id": 0
+  },
+  {
+    "id": 40,
+    "image": "north_carolina",
+    "description": "노스캐롤라이나 : 여행유의",
+    "parent_id": 0
+  },
+  {
+    "id": 41,
+    "image": "north_dakota",
+    "description": "노스다코타 : 여행유의",
+    "parent_id": 0
+  },
+  {
+    "id": 42,
+    "image": "ohio",
+    "description": "오하이오 : 여행유의",
+    "parent_id": 0
+  },
+  {
+    "id": 43,
+    "image": "oklahoma",
+    "description": "오클라호마 : 여행유의",
+    "parent_id": 0
+  },
+  {
+    "id": 44,
+    "image": "pennsylvania",
+    "description": "펜실베이니아 : 여행유의",
+    "parent_id": 0
+  },
+  {
+    "id": 45,
+    "image": "rhode_island",
+    "description": "로드아일랜드 : 여행유의",
+    "parent_id": 0
+  },
+  {
+    "id": 46,
+    "image": "south_carolina",
+    "description": "사우스캐롤라이나 : 여행유의",
+    "parent_id": 0
+  },
+  {
+    "id": 47,
+    "image": "south_dakota",
+    "description": "사우스다코타 : 여행유의",
+    "parent_id": 0
+  },
+  {
+    "id": 48,
+    "image": "tennessee",
+    "description": "테네시 : 여행유의",
+    "parent_id": 0
+  },
+  {
+    "id": 49,
+    "image": "vermont",
+    "description": "버몬트 : 여행유의",
+    "parent_id": 0
+  },
+  {
+    "id": 50,
+    "image": "virginia",
+    "description": "버지니아 : 여행유의",
+    "parent_id": 0
+  },
+  {
+    "id": 51,
+    "image": "wa_shington",
+    "description": "워싱턴 : 여행유의",
+    "parent_id": 0
+  },
+  {
+    "id": 52,
+    "image": "west_virginia",
+    "description": "웨스트버지니아 : 여행유의",
+    "parent_id": 0
+  },
+  {
+    "id": 53,
+    "image": "wisconsin",
+    "description": "위스콘신 : 여행유의",
+    "parent_id": 0
+  },
+  {
+    "id": 54,
+    "image": "wyoming",
+    "description": "와이오밍 : 여행유의",
+    "parent_id": 0
+  },
+  {
+    "id": 55,
+    "image": "hawaii_1",
+    "description": "와이키키 비치",
+    "parent_id": 19
+  },
+  {
+    "id": 56,
+    "image": "hawaii_2",
+    "description": "하와이 화산 국립 공원",
+    "parent_id": 19
+  },
+  {
+    "id": 57,
+    "image": "florida_1",
+    "description": "월트 디즈니 월드",
+    "parent_id": 17
+  },
+  {
+    "id": 58,
+    "image": "florida_2",
+    "description": "마이애미 비치",
+    "parent_id": 17
+  },
+  {
+    "id": 59,
+    "image": "illinois_1",
+    "description": "시카고 미시간 호수",
+    "parent_id": 21
+  },
+  {
+    "id": 60,
+    "image": "illinois_2",
+    "description": "밀레니엄 파크",
+    "parent_id": 21
+  },
+  {
+    "id": 61,
+    "image": "new_york_1",
+    "description": "자유의 여신상",
+    "parent_id": 39
+  },
+  {
+    "id": 62,
+    "image": "new_york_2",
+    "description": "타임스퀘어",
+    "parent_id": 39
+  }
 ]

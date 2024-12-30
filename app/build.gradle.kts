@@ -58,6 +58,8 @@ dependencies {
     implementation(libs.firebase.crashlytics.buildtools)
     implementation(libs.room.runtime) // Room Runtime
     implementation(libs.room.ktx)    // Kotlin Extensions for Room
+    implementation(libs.glide)
+    kapt(libs.glidecompiler)
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)

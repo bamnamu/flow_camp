@@ -7,6 +7,7 @@ import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
+import com.bumptech.glide.Glide
 import com.example.flowcamp_week1.R
 import com.example.flowcamp_week1.utils.tab2_data_tree
 import java.io.File
@@ -32,24 +33,21 @@ class PhotoAdapter(
         val photo = photoList[position]
         val context = holder.itemView.context
 
-        // 이미지 설정
-        when {
-            photo.image.startsWith("content://") -> { // URI 처리
-                holder.imageView.setImageURI(Uri.parse(photo.image))
-            }
-            photo.image.startsWith("/") -> { // 내부 저장소 파일 경로 처리
-                val file = File(photo.image)
-                if (file.exists()) {
-                    holder.imageView.setImageURI(Uri.fromFile(file))
+        // Glide를 사용하여 이미지 로드
+        Glide.with(context)
+            .load(
+                when {
+                    photo.image.startsWith("content://") -> Uri.parse(photo.image) // URI 처리
+                    photo.image.startsWith("/") -> File(photo.image) // 내부 저장소 파일 경로
+                    else -> { // 리소스 이름 처리
+                        val resId = context.resources.getIdentifier(photo.image, "drawable", context.packageName)
+                        if (resId != 0) resId else null
+                    }
                 }
-            }
-            else -> { // 리소스 이름 처리
-                val imageResId = context.resources.getIdentifier(photo.image, "drawable", context.packageName)
-                if (imageResId != 0) {
-                    holder.imageView.setImageResource(imageResId)
-                }
-            }
-        }
+            )
+            .override(300, 300) // 크기 제한
+            .fitCenter() // 이미지 비율 유지
+            .into(holder.imageView)
 
         // 텍스트 설정
         holder.textView.text = photo.description

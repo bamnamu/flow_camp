@@ -95,11 +95,11 @@ class DashboardFragment : Fragment() {
         binding.recyclerView.adapter = PhotoAdapter(photoData,
             onPhotoClick = { clickedItem ->
                 val children = allPhotoData.filter { it.parent_id == clickedItem.id } // 자식 항목 필터링
-                if (children.isNotEmpty()) {
-                    parentDataStack.add(currentPhotoData) // 현재 데이터 스택에 저장
-                    currentPhotoData = children
-                    showPhotoData(children) // 자식 항목 표시
-                }
+                //if (children.isNotEmpty()) {
+                parentDataStack.add(currentPhotoData) // 현재 데이터 스택에 저장
+                currentPhotoData = children
+                showPhotoData(children) // 자식 항목 표시
+                //}
             },
             onPhotoLongClick = { clickedItem ->
                 showDeleteDialog(clickedItem)
