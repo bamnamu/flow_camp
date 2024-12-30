@@ -19,7 +19,7 @@ gson = "2.10.1"
 room = "2.5.2"
 kotlinx-serialization = "1.6.0"
 firebaseCrashlyticsBuildtools = "3.0.2"
-
+glide = "4.15.1"
 
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
@@ -43,6 +43,8 @@ room-runtime = { module = "androidx.room:room-runtime", version.ref = "room" }
 room-compiler = { module = "androidx.room:room-compiler", version.ref = "room" }
 room-ktx = { module = "androidx.room:room-ktx", version.ref = "room" }
 kotlinx-serialization-json = { module = "org.jetbrains.kotlinx:kotlinx-serialization-json", version.ref = "kotlinx-serialization" }
+glide = { module = "com.github.bumptech.glide:glide", version.ref = "glide" }
+glidecompiler = { module = "com.github.bumptech.glide:compiler", version.ref = "glide" }
 
 
 [plugins]

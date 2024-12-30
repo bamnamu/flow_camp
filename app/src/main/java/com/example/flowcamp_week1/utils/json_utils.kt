@@ -12,6 +12,7 @@ data class tab2_data_tree(
     val id: Int,
     val image: String,
     val description: String,
-    val parent_id: Int
+    val parent_id: Int,
+    val extrainfo: String
 )
 
