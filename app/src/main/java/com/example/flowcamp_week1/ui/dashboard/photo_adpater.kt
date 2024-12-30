@@ -21,6 +21,7 @@ class PhotoAdapter(
     class PhotoViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         val imageView: ImageView = itemView.findViewById(R.id.imageView)
         val textView: TextView = itemView.findViewById(R.id.textView)
+        val extraInfoView: TextView = itemView.findViewById(R.id.textViewExtraInfo) // extrainfo 추가
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): PhotoViewHolder {
@@ -51,6 +52,17 @@ class PhotoAdapter(
 
         // 텍스트 설정
         holder.textView.text = photo.description
+        holder.extraInfoView.text = photo.extrainfo // extrainfo 표시
+
+        if (photo.extrainfo == "여행유의") {
+            holder.extraInfoView.setBackgroundResource(R.drawable.tab2_blue_border) // 남색 테두리
+        }
+        else if(photo.extrainfo=="여행안전") {
+            holder.extraInfoView.setBackgroundResource(R.drawable.tab2_white_border)
+        }
+        else {
+            holder.extraInfoView.setBackgroundResource(0) // 기본 배경
+        }
 
         // 클릭 이벤트 처리
         holder.itemView.setOnClickListener {
