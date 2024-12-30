@@ -1,49 +1,56 @@
 [
-  {
-    "image": "california",
-    "description": "켈리포니아 : 여행유의",
-    "children" : [
-      {
-        "image" : "california_1",
-        "description": "요세미티 국립 공원",
-        "children": []
-      },
-      {
-        "image": "california_2",
-        "description": "유니버셜 스튜디오",
-        "children": []
-      }
-    ]
-  },
-  {
-    "image": "nevada",
-    "description": "네바다 : 여행유의",
-    "children": []
-  },
-  {
-    "image": "oregon",
-    "description": "오리건 : 여행유의",
-    "children": []
-  },
-  {
-    "image": "texas",
-    "description": "텍사스 : 여행유의",
-    "children": [
-      {
-        "image": "texas_1",
-        "description": "케마 보드워크",
-        "children": []
-      },
-      {
-        "image": "texas_2",
-        "description": "선댄스 광장",
-        "children": []
-      }
-    ]
-  },
-  {
-    "image": "utah",
-    "description": "유타 : 여행유의",
-    "children": []
-  }
+    {
+      "id": 1,
+      "image": "california",
+      "description": "켈리포니아 : 여행유의",
+      "parent_id": 0
+    },
+    {
+      "id": 2,
+      "image": "california_1",
+      "description": "요세미티 국립 공원",
+      "parent_id": 1
+    },
+    {
+      "id": 3,
+      "image": "california_2",
+      "description": "유니버셜 스튜디오",
+      "parent_id": 1
+    },
+    {
+      "id": 4,
+      "image": "nevada",
+      "description": "네바다 : 여행유의",
+      "parent_id": 0
+    },
+    {
+      "id": 5,
+      "image": "oregon",
+      "description": "오리건 : 여행유의",
+      "parent_id": 0
+    },
+    {
+      "id": 6,
+      "image": "texas",
+      "description": "텍사스 : 여행유의",
+      "parent_id": 0
+    },
+    {
+      "id": 7,
+      "image": "texas_1",
+      "description": "케마 보드워크",
+      "parent_id": 6
+    },
+    {
+      "id": 8,
+      "image": "texas_2",
+      "description": "선댄스 광장",
+      "parent_id": 6
+    },
+    {
+      "id": 9,
+      "image": "utah",
+      "description": "유타 : 여행유의",
+      "parent_id": 0
+    }
 ]

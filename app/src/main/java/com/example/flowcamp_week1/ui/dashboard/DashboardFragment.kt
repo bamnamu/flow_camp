@@ -16,27 +16,31 @@ import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.GridLayoutManager
 import com.example.flowcamp_week1.R
 import com.example.flowcamp_week1.databinding.FragmentDashboardBinding
-import com.example.flowcamp_week1.utils.loadPhotoData
-import com.example.flowcamp_week1.utils.tab2_data_tree
+import com.example.flowcamp_week1.utils.*
 import androidx.activity.result.contract.ActivityResultContracts
+import kotlinx.serialization.json.Json
+import kotlinx.serialization.decodeFromString
+import kotlinx.serialization.encodeToString
+import android.util.Log
+import java.io.File
+import java.io.FileOutputStream
 
 class DashboardFragment : Fragment() {
 
     private var _binding: FragmentDashboardBinding? = null
     private val binding get() = _binding!!
 
+    private var allPhotoData: List<tab2_data_tree> = emptyList()
     private var currentPhotoData: List<tab2_data_tree> = emptyList()
     private val parentDataStack = mutableListOf<List<tab2_data_tree>>()
-
-    // 갤러리에서 선택한 이미지 URI 저장 및 ImageView 참조
-    private var selectedImageUri: Uri? = null
     private var selectedImageView: ImageView? = null
+    private var selectedImageUri: Uri? = null
+    private val fileName = "photos.json"
 
-    // ActivityResultLauncher 등록 (갤러리에서 이미지 선택)
     private val selectImageLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
         if (result.resultCode == Activity.RESULT_OK) {
-            selectedImageUri = result.data?.data // 선택한 이미지 URI 저장
-            selectedImageView?.setImageURI(selectedImageUri) // Dialog의 ImageView에 선택한 이미지 표시
+            selectedImageUri = result.data?.data
+            selectedImageView?.setImageURI(selectedImageUri)
         }
     }
 
@@ -52,9 +56,16 @@ class DashboardFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        // 초기 데이터 로드
-        val allPhotoData = loadPhotoData(requireContext())
-        showPhotoData(allPhotoData)
+        // JSON 파일 초기화: 내부 저장소로 복사
+        val file = requireContext().getFileStreamPath(fileName)
+        if (!file.exists()) {
+            copyRawJsonToInternal(requireContext(), R.raw.tab2_photo_states, fileName)
+        }
+
+        // 내부 저장소에서 JSON 파일 로드
+        allPhotoData = loadPhotoDataFromInternal()
+        currentPhotoData = allPhotoData.filter { it.parent_id == 0 } // parent_id가 0인 주만 표시
+        showPhotoData(currentPhotoData)
 
         // 뒤로 가기 버튼 클릭 이벤트
         binding.backButton.setOnClickListener {
@@ -70,15 +81,30 @@ class DashboardFragment : Fragment() {
         }
     }
 
+    private fun loadPhotoDataFromInternal(): List<tab2_data_tree> {
+        val jsonString = requireContext().readJsonFile(fileName)
+        return Json.decodeFromString(jsonString)
+    }
+
+    private fun savePhotoDataToInternal(data: List<tab2_data_tree>) {
+        requireContext().saveJsonFile(fileName, data)
+    }
+
     private fun showPhotoData(photoData: List<tab2_data_tree>) {
-        currentPhotoData = photoData
         binding.recyclerView.layoutManager = GridLayoutManager(requireContext(), 2)
-        binding.recyclerView.adapter = PhotoAdapter(photoData) { children ->
-            if (children.isNotEmpty()) {
-                parentDataStack.add(currentPhotoData)
-                showPhotoData(children)
+        binding.recyclerView.adapter = PhotoAdapter(photoData,
+            onPhotoClick = { clickedItem ->
+                val children = allPhotoData.filter { it.parent_id == clickedItem.id } // 자식 항목 필터링
+                if (children.isNotEmpty()) {
+                    parentDataStack.add(currentPhotoData) // 현재 데이터 스택에 저장
+                    currentPhotoData = children
+                    showPhotoData(children) // 자식 항목 표시
+                }
+            },
+            onPhotoLongClick = { clickedItem ->
+                showDeleteDialog(clickedItem)
             }
-        }
+        )
 
         // 뒤로 가기 및 추가 버튼 가시성 업데이트
         val isBackButtonVisible = parentDataStack.isNotEmpty()
@@ -86,21 +112,28 @@ class DashboardFragment : Fragment() {
         binding.addButton.visibility = if (isBackButtonVisible) View.VISIBLE else View.GONE
     }
 
+    private fun saveImageToInternalStorage(uri: Uri, fileName: String): String {
+        val file = File(requireContext().filesDir, fileName) // 내부 저장소 파일 생성
+        requireContext().contentResolver.openInputStream(uri)?.use { inputStream ->
+            FileOutputStream(file).use { outputStream ->
+                inputStream.copyTo(outputStream) // 이미지 저장
+            }
+        }
+        return file.absolutePath // 저장된 파일 경로 반환
+    }
+
     private fun showAddPhotoDialog() {
-        // Dialog 레이아웃 Inflate
         val dialogView = LayoutInflater.from(requireContext()).inflate(R.layout.dialog_add_photo, null)
         val descriptionEditText = dialogView.findViewById<EditText>(R.id.editTextDescription)
         val imageView = dialogView.findViewById<ImageView>(R.id.imageViewSelected)
 
         selectedImageView = imageView // 선택한 ImageView 참조 저장
 
-        // 이미지 클릭 이벤트 (갤러리 열기)
         imageView.setOnClickListener {
             val intent = Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI)
             selectImageLauncher.launch(intent)
         }
 
-        // Dialog 생성
         AlertDialog.Builder(requireContext())
             .setTitle("사진 추가")
             .setView(dialogView)
@@ -108,25 +141,50 @@ class DashboardFragment : Fragment() {
                 val description = descriptionEditText.text.toString()
 
                 if (selectedImageUri != null && description.isNotBlank()) {
-                    // 새로운 데이터 추가
+                    val fileName = "image_${System.currentTimeMillis()}.png"
+                    val imagePath = saveImageToInternalStorage(selectedImageUri!!, fileName)
+
                     val newPhoto = tab2_data_tree(
-                        image = selectedImageUri.toString(),
+                        id = allPhotoData.size + 1, // 고유 ID 생성
+                        image = imagePath, // 내부 저장소 경로 저장
                         description = description,
-                        children = emptyList()
+                        parent_id = if (parentDataStack.isNotEmpty()) parentDataStack.last().first().id else 0
                     )
-                    val updatedList = currentPhotoData + newPhoto
-                    showPhotoData(updatedList) // RecyclerView 업데이트
+                    allPhotoData = allPhotoData + newPhoto // 전체 데이터 업데이트
+                    savePhotoDataToInternal(allPhotoData) // 내부 저장소에 저장
+                    currentPhotoData = currentPhotoData + newPhoto // 현재 데이터 업데이트
+                    showPhotoData(currentPhotoData) // RecyclerView 업데이트
+                    Log.d("DEBUG", "Saved JSON Data: ${Json.encodeToString(allPhotoData)}")
                 } else {
                     Toast.makeText(requireContext(), "이미지와 설명을 모두 입력하세요.", Toast.LENGTH_SHORT).show()
                 }
                 dialog.dismiss()
             }
-            .setNegativeButton("취소") { dialog, _ ->
-                dialog.dismiss()
-            }
+            .setNegativeButton("취소") { dialog, _ -> dialog.dismiss() }
             .create()
             .show()
     }
+
+    private fun showDeleteDialog(photo: tab2_data_tree) {
+        AlertDialog.Builder(requireContext())
+            .setTitle("삭제하시겠습니까?")
+            .setMessage("선택한 항목을 삭제합니다.")
+            .setPositiveButton("삭제") { dialog, _ ->
+                deletePhoto(photo)
+                dialog.dismiss()
+            }
+            .setNegativeButton("취소") { dialog, _ -> dialog.dismiss() }
+            .create()
+            .show()
+    }
+
+    private fun deletePhoto(photo: tab2_data_tree) {
+        allPhotoData = allPhotoData.filter { it.id != photo.id } // 해당 항목 삭제
+        savePhotoDataToInternal(allPhotoData) // 내부 저장소 업데이트
+        currentPhotoData = currentPhotoData.filter { it.id != photo.id } // 현재 화면 데이터 업데이트
+        showPhotoData(currentPhotoData) // RecyclerView 업데이트
+    }
+
     override fun onDestroyView() {
         super.onDestroyView()
         _binding = null
