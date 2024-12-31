@@ -1,10 +1,12 @@
 package com.example.flowcamp_week1.ui.notifications
 
+import android.app.AlertDialog
+import android.content.Intent
+import android.net.Uri
 import android.os.Build
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -23,10 +25,30 @@ import java.io.IOException
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 import javax.net.ssl.*
+import android.util.Log
+import android.widget.Button
+import android.widget.EditText
+import android.widget.TextView
+import androidx.cardview.widget.CardView
+import androidx.core.widget.addTextChangedListener
+import androidx.lifecycle.withStateAtLeast
+import com.example.flowcamp_week1.R
+import com.example.flowcamp_week1.databinding.UtilitiesLengthLayoutBinding
+import retrofit2.Call
+import retrofit2.Retrofit
+import retrofit2.converter.gson.GsonConverterFactory
+import kotlin.math.min
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
+import javax.net.ssl.*
+
 
 class NotificationsFragment : Fragment() {
 
     private var _binding: FragmentNotificationsBinding? = null
+
+    // This property is only valid between onCreateView and
+    // onDestroyView.
     private val binding get() = _binding!!
 
     // 임시 환율값. API 결과로 업데이트됨.
@@ -41,6 +63,9 @@ class NotificationsFragment : Fragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
+        Log.d("onCreateView", "just start")
+
+
         _binding = FragmentNotificationsBinding.inflate(inflater, container, false)
         val root = binding.root
 
@@ -52,6 +77,134 @@ class NotificationsFragment : Fragment() {
 
         // 초기 환율 표시
         binding.exchangeRateDisplay.text = "1달러 당 $exchangeRate 원"
+
+        // 1) length_layout inflate + AlertDialog 생성 (단 한 번)
+        val lenView = LayoutInflater.from(binding.root.context).inflate(R.layout.utilities_length_layout, null)
+        val lenDialog = AlertDialog.Builder(binding.root.context).create()
+        lenDialog.setView(lenView)
+
+        //2) View 참조
+        val mInput = lenView.findViewById<EditText>(R.id.m_input)
+        val cmInput = lenView.findViewById<EditText>(R.id.cm_input)
+        val ftInput = lenView.findViewById<EditText>(R.id.ft_input)
+        val inInput = lenView.findViewById<EditText>(R.id.in_input)
+
+        //3) TextWatcher 설정
+        //cm 변경 감지
+        cmInput.addTextChangedListener(object: TextWatcher{
+            override fun afterTextChanged(s: Editable?) {
+                if (cmInput.isFocused){
+                    val cmValue = s.toString().toDoubleOrNull() ?:0.0
+//                    val mValue = cmValue / 100.0
+//                    val inValue = cmValue / 2.54
+//                    val ftValue = inValue / 12.0
+                    val mValue = mInput.text.toString().toDoubleOrNull() ?:0.0
+                    var inValue = (cmValue + mValue * 100) / 2.54
+                    val ftValue = (inValue/12).toInt()
+                    inValue = inValue - ftValue * 12
+
+
+                    //cm, m 모두 표시
+                    mInput.setText(String.format("%d", mValue.toInt()))
+                    //ft, in 모두 표시
+                    ftInput.setText(String.format("%d", ftValue))
+                    inInput.setText(String.format("%.2f", inValue))
+                }
+            }
+
+            override fun beforeTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {}
+            override fun onTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {}
+        })
+
+        //m 변경 감지
+        mInput.addTextChangedListener(object : TextWatcher{
+            override fun afterTextChanged(s: Editable?) {
+                if (mInput.isFocused){
+                    val mValue = s.toString().toDoubleOrNull() ?:0.0
+//
+//                    val cmValue = mValue * 100.0
+//                    val inValue = cmValue / 2.54
+//                    val ftValue = inValue / 12.0
+                    val cmValue = cmInput.toString().toDoubleOrNull() ?:0.0
+                    var inValue = (cmValue + mValue * 100) / 2.54
+                    val ftValue = (inValue/12).toInt()
+                    inValue = inValue - ftValue * 12
+
+
+
+                    //cm, m 모두 표시
+                    cmInput.setText(String.format("%.2f", cmValue))
+                    //ft, in 모두 표시
+                    ftInput.setText(String.format("%d", ftValue))
+                    inInput.setText(String.format("%.2f", inValue))
+                }
+            }
+
+            override fun beforeTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {}
+            override fun onTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {}
+        })
+
+        // in 변경 감지
+        inInput.addTextChangedListener(object : TextWatcher {
+            override fun afterTextChanged(s: Editable?) {
+                if (inInput.isFocused) {
+                    val inValue = s.toString().toDoubleOrNull() ?: 0.0
+
+//                    val cmValue = inValue * 2.54
+//                    val mValue = cmValue / 100.0
+//                    val ftValue = inValue / 12.0
+                    val ftValue = ftInput.toString().toDoubleOrNull() ?:0.0
+                    var cmValue = ftValue * 30.48 + inValue * 2.54
+                    val mValue = (cmValue / 100).toInt()
+                    cmValue = cmValue - mValue * 100
+
+                    //cm, m 모두 표시
+                    cmInput.setText(String.format("%.2f", cmValue))
+                    mInput.setText(String.format("%d", mValue))
+                    //ft 표시
+                    ftInput.setText(String.format("%d", ftValue.toInt()))
+                }
+            }
+
+            override fun onTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {}
+            override fun beforeTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {}
+        })
+
+        //ft 변경 감지
+        ftInput.addTextChangedListener(object : TextWatcher{
+            override fun afterTextChanged(s: Editable?) {
+                if (ftInput.isFocused){
+                    val ftValue = s.toString().toDoubleOrNull() ?:0.0
+
+//                    val inValue = ftValue * 12.0
+//                    val cmValue = inValue * 2.54
+//                    val mValue = cmValue / 100.0
+                    val inValue = inInput.toString().toDoubleOrNull() ?:0.0
+                    var cmValue = ftValue * 30.48 + inValue * 2.54
+                    val mValue = (cmValue / 100).toInt()
+                    cmValue = cmValue - mValue * 100
+
+                    cmInput.setText(String.format("%.2f", cmValue))
+                    mInput.setText(String.format("%d", mValue))
+                    inInput.setText(String.format("%.2f", inValue))
+                }
+            }
+
+            override fun onTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {}
+            override fun beforeTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {}
+        })
+
+        //4) 버튼 클릭 시 dialog.show()
+        binding.conversionCardLength.setOnClickListener{
+            lenDialog.show()
+        }
+
+//        val lenButton = binding.conversionCardLength
+//        lenButton.setOnClickListener{
+//            lenDialog.show()
+//            setupLengthListeners()
+//        }
+
         return root
     }
 
@@ -156,6 +309,7 @@ class NotificationsFragment : Fragment() {
         return null
     }
 
+
     override fun onDestroyView() {
         super.onDestroyView()
         _binding = null
@@ -186,6 +340,7 @@ class NotificationsFragment : Fragment() {
                     binding.wonInput.setText(String.format("%.0f", wonValue))
                 }
             }
+
 
             override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {}

@@ -31,17 +31,18 @@
             android:layout_height="205dp"
             android:padding="16dp">
 
+
             <!--            원 입력-->
             <EditText
                 android:id="@+id/won_input"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_alignParentStart="true"
-                android:layout_centerVertical="true"
+                android:layout_marginStart="26dp"
                 android:layout_marginRight="8dp"
                 android:autofillHints="0"
                 android:background="@null"
-                android:gravity="center"
+                android:gravity="top|start"
                 android:hint="원"
                 android:inputType="numberDecimal"
                 android:textSize="24sp" />
@@ -52,11 +53,13 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_alignParentEnd="true"
-                android:layout_centerVertical="true"
+                android:layout_alignParentBottom="true"
                 android:layout_marginLeft="8dp"
+                android:layout_marginEnd="30dp"
+                android:layout_marginBottom="12dp"
                 android:autofillHints="0"
                 android:background="@null"
-                android:gravity="center"
+                android:gravity="bottom|end"
                 android:hint="달러"
                 android:inputType="numberDecimal"
                 android:textSize="24sp" />
@@ -67,7 +70,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_below="@id/won_input"
-                android:layout_marginTop="17dp"
+                android:layout_marginTop="40dp"
                 android:gravity="center"
                 android:text="1달러 당 N원"
                 android:textColor="#3DA5F6"
@@ -76,4 +79,103 @@
 
         </RelativeLayout>
     </androidx.cardview.widget.CardView>
+
+    <TextView
+        android:id="@+id/converter_title"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="단위 변환기"
+        android:layout_below="@id/conversion_card"
+        android:padding="16dp"/>
+
+    <androidx.cardview.widget.CardView
+        android:id="@+id/conversion_card_length"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:layout_marginBottom="16dp"
+        android:layout_marginLeft="16dp"
+        android:layout_marginRight="16dp"
+        android:layout_centerHorizontal="true"
+        android:layout_below="@id/converter_title"
+        app:cardCornerRadius="16dp"
+        app:cardElevation="8dp"
+        android:background="@android:color/white">
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="64dp"
+            android:padding="16dp">
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:text="길이 변환"
+                android:gravity="center"
+                android:textSize="22dp"
+                android:fontFamily="@font/nanumgothic"
+                android:textStyle="bold"/>
+        </RelativeLayout>
+    </androidx.cardview.widget.CardView>
+
+    <androidx.cardview.widget.CardView
+        android:id="@+id/conversion_card_weight"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:layout_marginBottom="16dp"
+        android:layout_marginLeft="16dp"
+        android:layout_marginRight="16dp"
+        android:layout_centerHorizontal="true"
+        android:layout_below="@id/conversion_card_length"
+        app:cardCornerRadius="16dp"
+        app:cardElevation="8dp"
+        android:background="@android:color/white">
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="64dp"
+            android:padding="16dp">
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:text="무게 변환"
+                android:gravity="center"
+                android:textSize="22dp"
+                android:fontFamily="@font/nanumgothic"
+                android:textStyle="bold"/>
+        </RelativeLayout>
+    </androidx.cardview.widget.CardView>
+
+    <androidx.cardview.widget.CardView
+        android:id="@+id/conversion_card_temperature"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:layout_marginBottom="16dp"
+        android:layout_marginLeft="16dp"
+        android:layout_marginRight="16dp"
+        android:layout_centerHorizontal="true"
+        android:layout_below="@id/conversion_card_weight"
+        app:cardCornerRadius="16dp"
+        app:cardElevation="8dp"
+        android:background="@android:color/white">
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="64dp"
+            android:padding="16dp">
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:text="온도 변환"
+                android:gravity="center"
+                android:textSize="22dp"
+                android:fontFamily="@font/nanumgothic"
+                android:textStyle="bold"/>
+        </RelativeLayout>
+    </androidx.cardview.widget.CardView>
+
 </RelativeLayout>
