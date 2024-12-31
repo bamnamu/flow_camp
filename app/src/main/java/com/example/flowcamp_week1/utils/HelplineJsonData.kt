@@ -9,9 +9,8 @@ import com.google.gson.reflect.TypeToken
 
 //json을 파싱할 중간 모델 (HelplineModel과 별개로 json 속 필드를 매핑할 간단한 클래스 필요)
 data class HelplineJsonData(
-    val imageResId: String,
     val title: String,
-    val bulletList: List<String>,
+    val bulletList: String,
     val contact: String
 )
 
@@ -28,13 +27,7 @@ fun loadHelplineData(context: Context): List<HelplineModel>{
 
     //imageName -> 실제 리소스 ID 변환 & HelplineModel 생성
     return jsonDataList.map { item ->
-        val imageResId = context.resources.getIdentifier(
-            item.imageResId,
-            "drawable",
-            context.packageName
-        )
         HelplineModel(
-            imageResId = imageResId,
             title = item.title,
             bulletList = item.bulletList,
             contact = item.contact
