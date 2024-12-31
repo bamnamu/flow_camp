@@ -1,0 +1,154 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:context=".ui.notifications.NotificationsFragment"
+    android:paddingLeft="16dp"
+    android:paddingRight="16dp"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:layout_marginBottom="56dp"
+    android:clipToPadding="false">
+
+    <!--    카드 배경-->
+    <androidx.cardview.widget.CardView
+        android:id="@+id/length_conversion_card"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="50dp"
+        android:layout_marginBottom="16dp"
+        android:layout_marginLeft="16dp"
+        android:layout_marginRight="16dp"
+        android:layout_centerHorizontal="true"
+        app:cardCornerRadius="16dp"
+        app:cardElevation="8dp"
+        android:background="@android:color/white">
+
+        <RelativeLayout
+            android:layout_width="wrap_content"
+            android:layout_height="205dp"
+            android:padding="16dp">
+
+<!--        m 입력 -->
+            <EditText
+                android:id="@+id/m_input"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="50dp"
+                android:layout_marginEnd="8dp"
+                android:autofillHints="0"
+                android:background="@null"
+                android:gravity="top|start"
+                android:inputType="numberDecimal"
+                android:textSize="24sp" />
+
+<!--            m-->
+            <TextView
+                android:id="@+id/m"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentStart="true"
+                android:layout_marginEnd="8dp"
+                android:layout_toEndOf="@id/m_input"
+                android:autofillHints="0"
+                android:background="@null"
+                android:gravity="top|start"
+                android:text="m"
+                android:textSize="24sp"
+                android:textStyle="italic"/>
+
+            <!--        cm 입력 -->
+            <EditText
+                android:id="@+id/cm_input"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_toEndOf="@id/m"
+                android:layout_marginStart="26dp"
+                android:layout_marginEnd="8dp"
+                android:autofillHints="0"
+                android:background="@null"
+                android:gravity="top|start"
+                android:inputType="numberDecimal"
+                android:textSize="24sp" />
+
+<!--            cm-->
+            <TextView
+                android:id="@+id/cm"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentTop="true"
+                android:layout_marginStart="8dp"
+                android:layout_toEndOf="@id/cm_input"
+                android:autofillHints="0"
+                android:background="@null"
+                android:gravity="top|start"
+                android:text="cm"
+                android:textSize="24sp"
+                android:textStyle="italic"/>
+
+<!--미국 단위-->
+            <!--        ft 입력 -->
+            <EditText
+                android:id="@+id/ft_input"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentBottom="true"
+                android:layout_marginStart="100dp"
+                android:layout_marginEnd="8dp"
+                android:autofillHints="0"
+                android:background="@null"
+                android:gravity="top|start"
+                android:inputType="numberDecimal"
+                android:textSize="24sp" />
+
+            <!--            ft-->
+            <TextView
+                android:id="@+id/ft"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentBottom="true"
+                android:layout_marginEnd="8dp"
+                android:layout_toEndOf="@id/ft_input"
+                android:autofillHints="0"
+                android:background="@null"
+                android:gravity="top|start"
+                android:text="ft"
+                android:textSize="24sp"
+                android:textStyle="italic" />
+
+            <!--        in 입력 -->
+            <EditText
+                android:id="@+id/in_input"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentBottom="true"
+                android:layout_toEndOf="@id/ft"
+                android:layout_marginStart="26dp"
+                android:layout_marginEnd="8dp"
+                android:autofillHints="0"
+                android:background="@null"
+                android:gravity="top|start"
+                android:inputType="numberDecimal"
+                android:textSize="24sp" />
+
+            <!--            in-->
+            <TextView
+                android:id="@+id/in"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentBottom="true"
+                android:layout_marginStart="8dp"
+                android:layout_toEndOf="@id/in_input"
+                android:autofillHints="0"
+                android:background="@null"
+                android:gravity="top|start"
+                android:text="in"
+                android:textSize="24sp"
+                android:textStyle="italic"/>
+
+
+        </RelativeLayout>
+    </androidx.cardview.widget.CardView>
+
+</RelativeLayout>
