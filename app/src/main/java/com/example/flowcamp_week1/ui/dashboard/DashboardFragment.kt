@@ -38,6 +38,9 @@ class DashboardFragment : Fragment() {
     private val fileName = "photos.json"
     private var currentParentId: Int = 0 // 현재 부모 ID를 저장
 
+    private var isMultiSelectMode = false
+    private val selectedItems = mutableSetOf<Int>()
+
     private val selectImageLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
         if (result.resultCode == Activity.RESULT_OK) {
             selectedImageUri = result.data?.data
@@ -70,7 +73,9 @@ class DashboardFragment : Fragment() {
 
         // 뒤로 가기 버튼 클릭 이벤트
         binding.backButton.setOnClickListener {
-            if (parentDataStack.isNotEmpty()) {
+            if (isMultiSelectMode) {
+                disableMultiSelectMode()
+            } else if (parentDataStack.isNotEmpty()) {
                 currentPhotoData = parentDataStack.removeAt(parentDataStack.size - 1)
                 currentParentId = if (currentPhotoData.isNotEmpty()) currentPhotoData[0].parent_id else 0
                 showPhotoData(currentPhotoData)
@@ -80,6 +85,16 @@ class DashboardFragment : Fragment() {
         // 추가 버튼 클릭 이벤트
         binding.addButton.setOnClickListener {
             showAddPhotoDialog()
+        }
+
+        // 삭제 버튼 클릭 이벤트
+        binding.deleteSelectedButton.setOnClickListener {
+            showDeleteSelectedDialog()
+        }
+
+        // 공유 버튼 클릭 이벤트
+        binding.shareSelectedButton.setOnClickListener {
+            shareSelectedItems()
         }
     }
 
@@ -103,28 +118,36 @@ class DashboardFragment : Fragment() {
         binding.recyclerView.layoutManager = GridLayoutManager(requireContext(), 2)
         binding.recyclerView.adapter = PhotoAdapter(photoData,
             onPhotoClick = { clickedItem ->
-                if (clickedItem.parent_id == 0) {
-                    val children = allPhotoData.filter { it.parent_id == clickedItem.id }
-                    parentDataStack.add(currentPhotoData) // 현재 데이터 스택에 저장
-                    currentPhotoData = children
-                    if(clickedItem.id!=0) {
-                        currentParentId = clickedItem.id // 부모 ID 설정
+                if (!isMultiSelectMode) {
+                    if (clickedItem.parent_id == 0) {
+                        val children = allPhotoData.filter { it.parent_id == clickedItem.id }
+                        parentDataStack.add(currentPhotoData) // 현재 데이터 스택에 저장
+                        currentPhotoData = children
+                        if (clickedItem.id != 0) {
+                            currentParentId = clickedItem.id // 부모 ID 설정
+                        }
+                        Log.d("Database", "설정 : $currentParentId")
+                        showPhotoData(children) // 자식 항목 표시
+                    } else {
+                        showMapDialog(clickedItem) // 관광지 클릭 시 지도 연결
                     }
-                    Log.d("Database", "설정 : $currentParentId")
-                    showPhotoData(children) // 자식 항목 표시
                 } else {
-                    showMapDialog(clickedItem) // 관광지 클릭 시 지도 연결
+                    toggleItemSelection(clickedItem.id)
                 }
             },
-            onPhotoLongClick = { clickedItem ->
-                showDeleteDialog(clickedItem)
+            onPhotoLongClick = { enableMultiSelectMode() },
+            isMultiSelectMode = isMultiSelectMode,
+            selectedItems = selectedItems,
+            onItemSelected = { id, isSelected ->
+                if (isSelected) selectedItems.add(id) else selectedItems.remove(id)
             }
         )
 
         // 뒤로 가기 및 추가 버튼 가시성 업데이트
         val isBackButtonVisible = parentDataStack.isNotEmpty()
-        binding.backButton.visibility = if (isBackButtonVisible) View.VISIBLE else View.GONE
-        binding.addButton.visibility = if (isBackButtonVisible) View.VISIBLE else View.GONE
+        binding.backButton.visibility = if (isBackButtonVisible || isMultiSelectMode) View.VISIBLE else View.GONE
+        binding.addButton.visibility = if (!isMultiSelectMode&&isBackButtonVisible) View.VISIBLE else View.GONE
+        binding.actionButtons.visibility = if (isMultiSelectMode) View.VISIBLE else View.GONE
     }
 
     private fun saveImageToInternalStorage(uri: Uri, fileName: String): String {
@@ -181,6 +204,62 @@ class DashboardFragment : Fragment() {
             .setNegativeButton("취소") { dialog, _ -> dialog.dismiss() }
             .create()
             .show()
+    }
+
+    private fun showDeleteSelectedDialog() {
+        AlertDialog.Builder(requireContext())
+            .setTitle("삭제하시겠습니까?")
+            .setMessage("선택한 항목을 삭제합니다.")
+            .setPositiveButton("삭제") { dialog, _ ->
+                deleteSelectedItems()
+                dialog.dismiss()
+            }
+            .setNegativeButton("취소") { dialog, _ -> dialog.dismiss() }
+            .create()
+            .show()
+    }
+
+    private fun deleteSelectedItems() {
+        val itemsToDelete = allPhotoData.filter { it.id in selectedItems }
+        allPhotoData = allPhotoData - itemsToDelete
+        savePhotoDataToInternal(allPhotoData)
+        currentPhotoData = currentPhotoData.filter { it.id !in selectedItems }
+        disableMultiSelectMode()
+        showPhotoData(currentPhotoData)
+    }
+
+    private fun shareSelectedItems() {
+        val sharedText = selectedItems.joinToString("\n") { id ->
+            val item = allPhotoData.find { it.id == id }
+            "${item?.description} - ${item?.extrainfo}"
+        }
+
+        val shareIntent = Intent(Intent.ACTION_SEND).apply {
+            type = "text/plain"
+            putExtra(Intent.EXTRA_TEXT, sharedText)
+        }
+        startActivity(Intent.createChooser(shareIntent, "공유하기"))
+    }
+
+    private fun enableMultiSelectMode() {
+        isMultiSelectMode = true
+        selectedItems.clear()
+        showPhotoData(currentPhotoData)
+    }
+
+    private fun disableMultiSelectMode() {
+        isMultiSelectMode = false
+        selectedItems.clear()
+        showPhotoData(currentPhotoData)
+    }
+
+    private fun toggleItemSelection(itemId: Int) {
+        if (selectedItems.contains(itemId)) {
+            selectedItems.remove(itemId)
+        } else {
+            selectedItems.add(itemId)
+        }
+        showPhotoData(currentPhotoData)
     }
 
     private fun showMapDialog(photo: tab2_data_tree) {
