@@ -104,7 +104,6 @@ class NotificationsFragment : Fragment() {
                     val ftValue = (inValue/12).toInt()
                     inValue = inValue - ftValue * 12
 
-
                     //cm, m 모두 표시
                     mInput.setText(String.format("%d", mValue.toInt()))
                     //ft, in 모두 표시
@@ -205,6 +204,109 @@ class NotificationsFragment : Fragment() {
 //            lenDialog.show()
 //            setupLengthListeners()
 //        }
+
+        //1-1) length_layout inflate + AlertDialog 생성
+        val weightView = LayoutInflater.from(binding.root.context).inflate(R.layout.utilities_weight_layout, null)
+        val weightDialog = AlertDialog.Builder(binding.root.context).create()
+        weightDialog.setView(weightView)
+
+        //2-1) View 참조
+        val kgInput = weightView.findViewById<EditText>(R.id.kg_input)
+        val lbsInput = weightView.findViewById<EditText>(R.id.lbs_input)
+
+        //3-1) TextWatcher 설정
+        //kg 변경 감지
+        kgInput.addTextChangedListener(object : TextWatcher{
+            override fun afterTextChanged(s: Editable?) {
+                if (kgInput.isFocused){
+                    val kgValue = s.toString().toDoubleOrNull() ?:0.0
+                    val lbsValue = kgValue * 2.2
+
+                    //lbs 표시
+                    lbsInput.setText(String.format("%.2f", lbsValue))
+                }
+            }
+
+            override fun beforeTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {
+
+            }
+
+            override fun onTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {
+
+            }
+        })
+
+        //lbs 변경 감지
+        lbsInput.addTextChangedListener(object : TextWatcher{
+            override fun afterTextChanged(s: Editable?) {
+                if (lbsInput.isFocused){
+                    val lbsValue = s.toString().toDoubleOrNull() ?:0.0
+                    val kgValue = lbsValue / 2.2
+
+                    kgInput.setText(String.format("%.2f", kgValue))
+                }
+            }
+
+            override fun onTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {
+
+            }
+
+            override fun beforeTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {
+
+            }
+        })
+
+        //4-1) 버튼 클릭 시 dialog.show()
+        binding.conversionCardWeight.setOnClickListener({
+            weightDialog.show()
+        })
+
+        //1-2) length_layout inflate + AlertDialog 생성
+        val tempView = LayoutInflater.from(binding.root.context).inflate(R.layout.utilities_temperature_layout, null)
+        val tempDialog = AlertDialog.Builder(binding.root.context).create()
+        tempDialog.setView(tempView)
+
+        //2-2) View 참조
+        val cInput = tempView.findViewById<EditText>(R.id.c_input)
+        val fInput = tempView.findViewById<EditText>(R.id.f_input)
+
+        //3-2) TextWatcher 설정
+        //c 변경 감지
+        cInput.addTextChangedListener(object : TextWatcher{
+            override fun afterTextChanged(s: Editable?) {
+                if (cInput.isFocused){
+                    val cValue = s.toString().toDoubleOrNull() ?:0.0
+                    val fValue = cValue * (9.0/5.0) + 32
+
+                    fInput.setText(String.format("%.2f", fValue))
+                }
+            }
+
+            override fun beforeTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {}
+
+            override fun onTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {}
+        })
+
+        //f 변경 감지
+        fInput.addTextChangedListener(object : TextWatcher{
+            override fun afterTextChanged(s: Editable?) {
+                if (fInput.isFocused){
+                    val fValue = s.toString().toDoubleOrNull() ?:0.0
+                    val cValue = (fValue - 32) / 1.8
+
+                    cInput.setText(String.format("%.2f", cValue))
+                }
+            }
+
+            override fun beforeTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {}
+
+            override fun onTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {}
+        })
+
+        //4-2) 버튼 클릭 시 dialog.show()
+        binding.conversionCardTemperature.setOnClickListener({
+            tempDialog.show()
+        })
 
         return root
     }

@@ -11,24 +11,34 @@
     android:layout_marginBottom="56dp"
     android:clipToPadding="false">
 
+    <TextView
+        android:id="@+id/exchange_rate_title"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="환율 계산기"
+        android:paddingTop="8dp"
+        android:paddingBottom="8dp"
+        android:paddingLeft="16dp"/>
+
 <!--    카드 배경-->
 
     <androidx.cardview.widget.CardView
         android:id="@+id/conversion_card"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="50dp"
+        android:layout_marginTop="8dp"
         android:layout_marginBottom="16dp"
         android:layout_marginLeft="16dp"
         android:layout_marginRight="16dp"
         android:layout_centerHorizontal="true"
+        android:layout_below="@id/exchange_rate_title"
         app:cardCornerRadius="16dp"
         app:cardElevation="8dp"
         android:background="@android:color/white">
 
         <RelativeLayout
             android:layout_width="wrap_content"
-            android:layout_height="205dp"
+            android:layout_height="160dp"
             android:padding="16dp">
 
 
@@ -70,7 +80,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_below="@id/won_input"
-                android:layout_marginTop="40dp"
+                android:layout_marginTop="24dp"
                 android:gravity="center"
                 android:text="1달러 당 N원"
                 android:textColor="#3DA5F6"
@@ -93,7 +103,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="8dp"
-        android:layout_marginBottom="16dp"
+        android:layout_marginBottom="8dp"
         android:layout_marginLeft="16dp"
         android:layout_marginRight="16dp"
         android:layout_centerHorizontal="true"
@@ -104,8 +114,8 @@
 
         <RelativeLayout
             android:layout_width="match_parent"
-            android:layout_height="64dp"
-            android:padding="16dp">
+            android:layout_height="50dp"
+            android:padding="8dp">
 
             <TextView
                 android:layout_width="match_parent"
@@ -123,7 +133,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="8dp"
-        android:layout_marginBottom="16dp"
+        android:layout_marginBottom="8dp"
         android:layout_marginLeft="16dp"
         android:layout_marginRight="16dp"
         android:layout_centerHorizontal="true"
@@ -134,8 +144,8 @@
 
         <RelativeLayout
             android:layout_width="match_parent"
-            android:layout_height="64dp"
-            android:padding="16dp">
+            android:layout_height="50dp"
+            android:padding="8dp">
 
             <TextView
                 android:layout_width="match_parent"
@@ -153,7 +163,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="8dp"
-        android:layout_marginBottom="16dp"
+        android:layout_marginBottom="8dp"
         android:layout_marginLeft="16dp"
         android:layout_marginRight="16dp"
         android:layout_centerHorizontal="true"
@@ -164,8 +174,8 @@
 
         <RelativeLayout
             android:layout_width="match_parent"
-            android:layout_height="64dp"
-            android:padding="16dp">
+            android:layout_height="50dp"
+            android:padding="8dp">
 
             <TextView
                 android:layout_width="match_parent"
