@@ -13,11 +13,18 @@ import android.view.ViewGroup
 import androidx.annotation.RequiresApi
 import androidx.fragment.app.Fragment
 import com.example.flowcamp_week1.databinding.FragmentNotificationsBinding
-import java.io.BufferedReader
-import java.io.InputStreamReader
-import java.net.HttpURLConnection
-import java.net.URL
+import com.example.flowcamp_week1.utils.SimpleCookieJar
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
+import org.json.JSONArray
+import okhttp3.OkHttpClient
+import okhttp3.Request
+import java.io.IOException
 import java.time.LocalDate
+import java.time.format.DateTimeFormatter
+import javax.net.ssl.*
 import android.util.Log
 import android.widget.Button
 import android.widget.EditText
@@ -31,6 +38,9 @@ import retrofit2.Call
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 import kotlin.math.min
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
+import javax.net.ssl.*
 
 
 class NotificationsFragment : Fragment() {
@@ -41,7 +51,11 @@ class NotificationsFragment : Fragment() {
     // onDestroyView.
     private val binding get() = _binding!!
 
-    var exchangeRate = 1000 //임시. API로 가져와야 함. 1달러당 N원.
+    // 임시 환율값. API 결과로 업데이트됨.
+    private var exchangeRate = 1000.0
+
+    // OkHttpClient 인스턴스 생성 (SSL 검증 비활성화 포함)
+    private val client: OkHttpClient by lazy { getUnsafeOkHttpClient() }
 
     @RequiresApi(Build.VERSION_CODES.O)
     override fun onCreateView(
@@ -55,8 +69,13 @@ class NotificationsFragment : Fragment() {
         _binding = FragmentNotificationsBinding.inflate(inflater, container, false)
         val root = binding.root
 
-        getExchangeRate()
-        setupListeners()
+        // 환율 호출
+        fetchExchangeRate()
+
+        // EditText TextWatcher 설정
+        setupTextWatchers()
+
+        // 초기 환율 표시
         binding.exchangeRateDisplay.text = "1달러 당 $exchangeRate 원"
 
         // 1) length_layout inflate + AlertDialog 생성 (단 한 번)
@@ -189,180 +208,101 @@ class NotificationsFragment : Fragment() {
         return root
     }
 
-
-    private fun setupListeners() {
-        // 원 입력 필드의 변경 감지
-        binding.wonInput.addTextChangedListener(object: TextWatcher{
-            override fun afterTextChanged(s: Editable?){
-                if (binding.wonInput.isFocused){
-                    val wonValue = s.toString().toDoubleOrNull() ?: 0.0
-                    val dollarValue = wonValue / exchangeRate
-                    binding.dollarInput.setText(String.format("%.2f", dollarValue))
-                }
-            }
-
-            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int){}
-            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {}
-        })
-
-        // 달러 입력 필드의 변경 감지
-        binding.dollarInput.addTextChangedListener(object: TextWatcher {
-            override fun afterTextChanged(s: Editable?) {
-                if (binding.dollarInput.isFocused){
-                    val dollarValue = s.toString().toDoubleOrNull() ?: 0.0
-                    val wonValue = dollarValue * exchangeRate
-                    binding.wonInput.setText(String.format("%.0f", wonValue))
-                }
-            }
-
-            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
-            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {}
-        })
-    }
-
-    private fun setupLengthListeners() {
-        val lengthView = LayoutInflater.from(binding.root.context).inflate(R.layout.utilities_length_layout, null)
-
-        // 새로운 AlertDialog를 생성하여 Length Conversion Layout 표시
-        val lengthDialog = AlertDialog.Builder(binding.root.context).create()
-        lengthDialog.setView(lengthView)
-
-        // lengthDialog 표시
-        lengthDialog.show()
-
-        // Length Conversion Layout의 뷰와 상호작용 예시
-        val mInput = lengthView.findViewById<EditText>(R.id.m_input)
-        val cmInput = lengthView.findViewById<EditText>(R.id.cm_input)
-        val ftInput = lengthView.findViewById<EditText>(R.id.ft_input)
-        val inInput = lengthView.findViewById<EditText>(R.id.in_input)
-
-        //cm 필드의 변경 감지
-        cmInput.addTextChangedListener(object: TextWatcher{
-            override fun afterTextChanged(s: Editable?) {
-                if (cmInput.isFocused){
-                    val cmValue = s.toString().toDoubleOrNull() ?:0.0
-                    val mValue = cmValue / 100.0
-                    val inValue = cmValue / 2.54
-                    val ftValue = inValue / 12.0
-
-                    //cm, m 모두 표시
-                    mInput.setText(String.format("%.2f", mValue))
-                    //ft, in 모두 표시
-                    ftInput.setText(String.format("%.2f", ftValue))
-                    inInput.setText(String.format("%.2f", inValue))
-                }
-            }
-
-            override fun beforeTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {}
-            override fun onTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {}
-        })
-
-        //m 변경 감지
-        mInput.addTextChangedListener(object : TextWatcher{
-            override fun afterTextChanged(s: Editable?) {
-                if (mInput.isFocused){
-                    val mValue = s.toString().toDoubleOrNull() ?:0.0
-
-                    val cmValue = mValue * 100.0
-                    val inValue = cmValue / 2.54
-                    val ftValue = inValue / 12.0
-
-                    //cm, m 모두 표시
-                    cmInput.setText(String.format("%.2f", cmValue))
-                    //ft, in 모두 표시
-                    ftInput.setText(String.format("%.2f", ftValue))
-                    inInput.setText(String.format("%.2f", inValue))
-                }
-            }
-
-            override fun beforeTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {}
-            override fun onTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {}
-        })
-
-        // in 변경 감지
-        inInput.addTextChangedListener(object : TextWatcher {
-            override fun afterTextChanged(s: Editable?) {
-                if (inInput.isFocused) {
-                    val inValue = s.toString().toDoubleOrNull() ?: 0.0
-
-                    val cmValue = inValue * 2.54
-                    val mValue = cmValue / 100.0
-                    val ftValue = inValue / 12.0
-
-                    //cm, m 모두 표시
-                    cmInput.setText(String.format("%.2f", cmValue))
-                    mInput.setText(String.format("%.2f", mValue))
-                    //ft 표시
-                    ftInput.setText(String.format("%.2f", ftValue))
-                }
-            }
-
-            override fun onTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {}
-            override fun beforeTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {}
-        })
-
-        //ft 변경 감지
-        ftInput.addTextChangedListener(object : TextWatcher{
-            override fun afterTextChanged(s: Editable?) {
-                if (ftInput.isFocused){
-                    val ftValue = s.toString().toDoubleOrNull() ?:0.0
-
-                    val inValue = ftValue * 12.0
-                    val cmValue = inValue * 2.54
-                    val mValue = cmValue / 100.0
-
-                    cmInput.setText(String.format("%.2f", cmValue))
-                    mInput.setText(String.format("%.2f", mValue))
-                    inInput.setText(String.format("%.2f", inValue))
-                }
-            }
-
-            override fun onTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {}
-            override fun beforeTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {}
-        })
-
-    }
-
-    //환율 가져오는 함수
+    /**
+     * 환율 API를 호출하여 최신 데이터를 가져오는 함수
+     */
     @RequiresApi(Build.VERSION_CODES.O)
-    fun getExchangeRate(){
-        Log.d("getExchangeRate", "getExchangeRate function started")
+    private fun fetchExchangeRate() {
+        CoroutineScope(Dispatchers.IO).launch {
+            val authKey = "GkWSnQO1HtS8mCK47jMqVaSra3htcuXj"
+            val searchDate = LocalDate.now().format(DateTimeFormatter.ofPattern("yyyyMMdd"))
+            val data = "AP01"
+            val baseURL = "https://www.koreaexim.go.kr"
+            var currentURL = "$baseURL/site/program/financial/exchangeJSON?authkey=$authKey&searchdate=$searchDate&data=$data"
 
-        val authkey = "GkWSnQO1HtS8mCK47jMqVaSra3htcuXj"
-        Log.d("getExchangeRate", authkey)
-        val searchDate = LocalDate.now().toString().replace("-", "")
-        Log.d("getExchangeRate", searchDate)
-        val data = "AP01"
-        Log.d("getExchangeRate", data)
-        //요청 보내기
-        val reqURL =
-            "https://www.koreaexim.go.kr/site/program/financial/exchangeJSON?authkey=$authkey&searchdate=$searchDate&data=$data"
+            val visitedUrls = mutableSetOf<String>()
+            var redirectCount = 0
+            val maxRedirects = 10
+            var successful = false
 
-        Log.d("getExchangeRate", reqURL) //이것까지 나옴
+            try {
+                while (redirectCount < maxRedirects && !successful) {
+                    Log.d("OkHttpRedirect", "Requesting: $currentURL")
+                    visitedUrls.add(currentURL)
 
-        try {
-            val url = URL(reqURL)
-            Log.d("getExchangeRate", "url : $url.toString()") //여기까지도 나오는 듯?
+                    val request = Request.Builder()
+                        .url(currentURL)
+                        .header("User-Agent", "Mozilla/5.0 (Linux; Android 11; Pixel 4) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/88.0.4324.93 Mobile Safari/537.36")
+                        .header("Accept", "application/json")
+                        .build()
 
-            val netConn = url.openConnection() as HttpURLConnection
+                    val response = client.newCall(request).execute()
+                    val code = response.code
+                    Log.d("OkHttpRedirect", "Response code: $code")
 
-            if (netConn.responseCode == HttpURLConnection.HTTP_OK){
-                val reader = BufferedReader(InputStreamReader(netConn.inputStream))
-                val response = StringBuilder()
-                Log.d("getExchangeRate", "response: $response")
+                    when {
+                        code in 300..399 -> {
+                            val location = response.header("Location")
+                            Log.w("OkHttpRedirect", "Redirect to: $location")
+
+                            if (location.isNullOrEmpty()) {
+                                Log.e("OkHttpRedirect", "No Location header. Stopping.")
+                                break
+                            }
+
+                            currentURL = if (location.startsWith("http")) {
+                                location
+                            } else {
+                                "$baseURL$location"
+                            }
+                            /*
+                            if (visitedUrls.contains(currentURL)) {
+                                Log.e("OkHttpRedirect", "Redirect loop detected. Stopping.")
+                                break
+                            }*/
+                            redirectCount++
+                        }
+                        code == 200 -> {
+                            val body = response.body?.string() ?: ""
+                            Log.d("OkHttpRedirect", "Response Body: $body")
+
+                            val extractedRate = extractDealBasR(body, "USD")?.replace(",", "") ?: "데이터 오류"
+                            exchangeRate = extractDealBasR(body, "USD")?.replace(",", "")?.toDoubleOrNull() ?: 0.0
+                            Log.d("OkHttpRedirect", "Rate : $exchangeRate")
+                            withContext(Dispatchers.Main) {
+                                binding.exchangeRateDisplay.text = "1달러 당 $extractedRate 원"
+                            }
+                            successful = true
+                        }
+                        else -> {
+                            Log.e("OkHttpRedirect", "Failed with code: $code")
+                            break
+                        }
+                    }
+                    response.close()
+                }
+
+                if (redirectCount >= maxRedirects) {
+                    Log.e("OkHttpRedirect", "Too many redirects. Stopping.")
+                }
+            } catch (e: Exception) {
+                Log.e("OkHttpRedirect", "Unexpected error: ${e.message}")
+                e.printStackTrace()
             }
-
-
-        } catch (e: Exception) {
-            e.printStackTrace()
         }
     }
 
+    /**
+     * JSON 배열에서 특정 통화(currency)에 해당하는 "deal_bas_r" 값을 찾아 반환
+     */
     private fun extractDealBasR(jsonString: String, currency: String): String? {
-        val jsonArr = org.json.JSONArray(jsonString)
-        for (i in 0 until jsonArr.length()){
+        val jsonArr = JSONArray(jsonString)
+        for (i in 0 until jsonArr.length()) {
             val jsonObject = jsonArr.getJSONObject(i)
-            if (jsonObject.getString("cur_unit") == currency){
+            Log.d("OkHttpRedirect", "this : $i, $jsonObject")
+            Log.d("OkHttpRedirect", "this : ${jsonObject.getString("cur_unit")==currency}")
+            if (jsonObject.getString("cur_unit") == currency) {
+                Log.d("OkHttpRedirect", "correct : ${jsonObject.getString("deal_bas_r")}")
                 return jsonObject.getString("deal_bas_r")
             }
         }
@@ -375,5 +315,62 @@ class NotificationsFragment : Fragment() {
         _binding = null
     }
 
+    /**
+     * EditText에 TextWatcher 추가 설정
+     */
+    private fun setupTextWatchers() {
+        binding.wonInput.addTextChangedListener(object : TextWatcher {
+            override fun afterTextChanged(s: Editable?) {
+                if (binding.wonInput.isFocused) {
+                    val wonValue = s.toString().toDoubleOrNull() ?: 0.0
+                    val dollarValue = wonValue / exchangeRate
+                    binding.dollarInput.setText(String.format("%.2f", dollarValue))
+                }
+            }
 
+            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
+            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {}
+        })
+
+        binding.dollarInput.addTextChangedListener(object : TextWatcher {
+            override fun afterTextChanged(s: Editable?) {
+                if (binding.dollarInput.isFocused) {
+                    val dollarValue = s.toString().toDoubleOrNull() ?: 0.0
+                    val wonValue = dollarValue * exchangeRate
+                    binding.wonInput.setText(String.format("%.0f", wonValue))
+                }
+            }
+
+
+            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
+            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {}
+        })
+    }
+
+    /**
+     * SSL 인증서 검증을 비활성화한 OkHttpClient 생성
+     */
+    private fun getUnsafeOkHttpClient(): OkHttpClient {
+        return try {
+            val trustAllCerts = arrayOf<TrustManager>(
+                object : X509TrustManager {
+                    override fun checkClientTrusted(chain: Array<java.security.cert.X509Certificate>, authType: String) {}
+                    override fun checkServerTrusted(chain: Array<java.security.cert.X509Certificate>, authType: String) {}
+                    override fun getAcceptedIssuers(): Array<java.security.cert.X509Certificate> = arrayOf()
+                }
+            )
+            val sslContext = SSLContext.getInstance("SSL")
+            sslContext.init(null, trustAllCerts, java.security.SecureRandom())
+            val sslSocketFactory = sslContext.socketFactory
+
+            OkHttpClient.Builder()
+                .sslSocketFactory(sslSocketFactory, trustAllCerts[0] as X509TrustManager)
+                .hostnameVerifier { _, _ -> true }
+                .cookieJar(SimpleCookieJar())
+                .followRedirects(false)
+                .build()
+        } catch (e: Exception) {
+            throw RuntimeException(e)
+        }
+    }
 }

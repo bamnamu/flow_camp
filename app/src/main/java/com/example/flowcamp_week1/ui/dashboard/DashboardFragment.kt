@@ -36,6 +36,7 @@ class DashboardFragment : Fragment() {
     private var selectedImageView: ImageView? = null
     private var selectedImageUri: Uri? = null
     private val fileName = "photos.json"
+    private var currentParentId: Int = 0 // 현재 부모 ID를 저장
 
     private val selectImageLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
         if (result.resultCode == Activity.RESULT_OK) {
@@ -71,6 +72,7 @@ class DashboardFragment : Fragment() {
         binding.backButton.setOnClickListener {
             if (parentDataStack.isNotEmpty()) {
                 currentPhotoData = parentDataStack.removeAt(parentDataStack.size - 1)
+                currentParentId = if (currentPhotoData.isNotEmpty()) currentPhotoData[0].parent_id else 0
                 showPhotoData(currentPhotoData)
             }
         }
@@ -91,20 +93,27 @@ class DashboardFragment : Fragment() {
     }
 
     private fun showPhotoData(photoData: List<tab2_data_tree>) {
+        currentPhotoData = photoData // 현재 데이터 업데이트
+        currentParentId = if (photoData.isNotEmpty()) {
+            if (photoData[0].parent_id == 0) photoData[0].id else photoData[0].parent_id
+        } else {
+            currentParentId // 최상위 레벨
+        }
+
         binding.recyclerView.layoutManager = GridLayoutManager(requireContext(), 2)
         binding.recyclerView.adapter = PhotoAdapter(photoData,
             onPhotoClick = { clickedItem ->
-                if (clickedItem.parent_id != 0) {
-                    // 관광지 클릭 시
-                    showMapDialog(clickedItem)
-                } else {
-                    // 주 클릭 시
+                if (clickedItem.parent_id == 0) {
                     val children = allPhotoData.filter { it.parent_id == clickedItem.id }
-                    if (clickedItem.parent_id==0) {
-                        parentDataStack.add(currentPhotoData) // 현재 데이터 스택에 저장
-                        currentPhotoData = children
-                        showPhotoData(children) // 자식 항목 표시
+                    parentDataStack.add(currentPhotoData) // 현재 데이터 스택에 저장
+                    currentPhotoData = children
+                    if(clickedItem.id!=0) {
+                        currentParentId = clickedItem.id // 부모 ID 설정
                     }
+                    Log.d("Database", "설정 : $currentParentId")
+                    showPhotoData(children) // 자식 항목 표시
+                } else {
+                    showMapDialog(clickedItem) // 관광지 클릭 시 지도 연결
                 }
             },
             onPhotoLongClick = { clickedItem ->
@@ -134,7 +143,7 @@ class DashboardFragment : Fragment() {
         val extraInfoEditText = dialogView.findViewById<EditText>(R.id.editTextExtraInfo) // extrainfo 입력 필드 추가
         val imageView = dialogView.findViewById<ImageView>(R.id.imageViewSelected)
 
-        selectedImageView = imageView // 선택한 ImageView 참조 저장
+        selectedImageView = imageView
 
         imageView.setOnClickListener {
             val intent = Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI)
@@ -154,11 +163,12 @@ class DashboardFragment : Fragment() {
 
                     val newPhoto = tab2_data_tree(
                         id = allPhotoData.size + 1, // 고유 ID 생성
-                        image = imagePath, // 내부 저장소 경로 저장
-                        description = description,
-                        parent_id = if (parentDataStack.isNotEmpty()) parentDataStack.last().first().id else 0,
-                        extrainfo = extraInfo.ifBlank { if (parentDataStack.isEmpty()) "여행유의" else "주소를 입력하세요." }
+                        image = imagePath,
+                        description = description.ifBlank { "설명을 입력하세요."},
+                        parent_id = currentParentId, // 현재 부모 ID 사용
+                        extrainfo = extraInfo.ifBlank { "주소를 입력하세요." }
                     )
+                    Log.d("Database", "parent id : $currentParentId")
                     allPhotoData = allPhotoData + newPhoto // 전체 데이터 업데이트
                     savePhotoDataToInternal(allPhotoData) // 내부 저장소에 저장
                     currentPhotoData = currentPhotoData + newPhoto // 현재 데이터 업데이트
