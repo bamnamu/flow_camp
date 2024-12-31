@@ -4,28 +4,36 @@ import android.os.Build
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.annotation.RequiresApi
 import androidx.fragment.app.Fragment
 import com.example.flowcamp_week1.databinding.FragmentNotificationsBinding
-import java.io.BufferedReader
-import java.io.InputStreamReader
-import java.net.HttpURLConnection
-import java.net.URL
+import com.example.flowcamp_week1.utils.SimpleCookieJar
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
+import org.json.JSONArray
+import okhttp3.OkHttpClient
+import okhttp3.Request
+import java.io.IOException
 import java.time.LocalDate
-import android.util.Log
+import java.time.format.DateTimeFormatter
+import javax.net.ssl.*
 
 class NotificationsFragment : Fragment() {
 
     private var _binding: FragmentNotificationsBinding? = null
-
-    // This property is only valid between onCreateView and
-    // onDestroyView.
     private val binding get() = _binding!!
 
-    var exchangeRate = 1000 //임시. API로 가져와야 함. 1달러당 N원.
+    // 임시 환율값. API 결과로 업데이트됨.
+    private var exchangeRate = 1000.0
+
+    // OkHttpClient 인스턴스 생성 (SSL 검증 비활성화 포함)
+    private val client: OkHttpClient by lazy { getUnsafeOkHttpClient() }
 
     @RequiresApi(Build.VERSION_CODES.O)
     override fun onCreateView(
@@ -33,128 +41,181 @@ class NotificationsFragment : Fragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        Log.d("onCreateView", "just start")
-
-
         _binding = FragmentNotificationsBinding.inflate(inflater, container, false)
         val root = binding.root
 
+        // 환율 호출
+        fetchExchangeRate()
 
-        getExchangeRate()
+        // EditText TextWatcher 설정
+        setupTextWatchers()
 
-        setupListeners()
-
+        // 초기 환율 표시
         binding.exchangeRateDisplay.text = "1달러 당 $exchangeRate 원"
         return root
     }
 
-    //환율 가져오는 함수
+    /**
+     * 환율 API를 호출하여 최신 데이터를 가져오는 함수
+     */
     @RequiresApi(Build.VERSION_CODES.O)
-    fun getExchangeRate(){
-        Log.d("getExchangeRate", "getExchangeRate function started")
+    private fun fetchExchangeRate() {
+        CoroutineScope(Dispatchers.IO).launch {
+            val authKey = "GkWSnQO1HtS8mCK47jMqVaSra3htcuXj"
+            val searchDate = LocalDate.now().format(DateTimeFormatter.ofPattern("yyyyMMdd"))
+            val data = "AP01"
+            val baseURL = "https://www.koreaexim.go.kr"
+            var currentURL = "$baseURL/site/program/financial/exchangeJSON?authkey=$authKey&searchdate=$searchDate&data=$data"
 
-        val authkey = "GkWSnQO1HtS8mCK47jMqVaSra3htcuXj"
-        Log.d("getExchangeRate", authkey)
-        val searchDate = LocalDate.now().toString().replace("-", "")
-        Log.d("getExchangeRate", searchDate)
-        val data = "AP01"
-        Log.d("getExchangeRate", data)
-        //요청 보내기
-        val reqURL =
-            "https://www.koreaexim.go.kr/site/program/financial/exchangeJSON?authkey=$authkey&searchdate=$searchDate&data$data"
+            val visitedUrls = mutableSetOf<String>()
+            var redirectCount = 0
+            val maxRedirects = 10
+            var successful = false
 
-        Log.d("getExchangeRate", reqURL) //이것까지 나옴
+            try {
+                while (redirectCount < maxRedirects && !successful) {
+                    Log.d("OkHttpRedirect", "Requesting: $currentURL")
+                    visitedUrls.add(currentURL)
 
-        try {
-            val url = URL(reqURL)
-            Log.d("getExchangeRate", "url : $url.toString()") //여기까지도 나오는 듯?
+                    val request = Request.Builder()
+                        .url(currentURL)
+                        .header("User-Agent", "Mozilla/5.0 (Linux; Android 11; Pixel 4) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/88.0.4324.93 Mobile Safari/537.36")
+                        .header("Accept", "application/json")
+                        .build()
 
-            val connection = url.openConnection() as HttpURLConnection
-            connection.requestMethod = "GET"
-            connection.connectTimeout = 5000 // 연결 타임아웃
-            connection.readTimeout = 5000 // 읽기 타임아웃
+                    val response = client.newCall(request).execute()
+                    val code = response.code
+                    Log.d("OkHttpRedirect", "Response code: $code")
 
-            //응답 코드 확인
-            val responseCode = connection.responseCode
-            Log.d("getExchangeRate", "responseCode: $responseCode")
-            if (responseCode == HttpURLConnection.HTTP_OK){
-                val reader = BufferedReader(InputStreamReader(connection.inputStream))
-                val response = StringBuilder()
-                var line: String?
+                    when {
+                        code in 300..399 -> {
+                            val location = response.header("Location")
+                            Log.w("OkHttpRedirect", "Redirect to: $location")
 
-                while (reader.readLine().also { line = it } != null) {
-                    response.append(line)
+                            if (location.isNullOrEmpty()) {
+                                Log.e("OkHttpRedirect", "No Location header. Stopping.")
+                                break
+                            }
+
+                            currentURL = if (location.startsWith("http")) {
+                                location
+                            } else {
+                                "$baseURL$location"
+                            }
+
+                            if (visitedUrls.contains(currentURL)) {
+                                Log.e("OkHttpRedirect", "Redirect loop detected. Stopping.")
+                                break
+                            }
+                            redirectCount++
+                        }
+                        code == 200 -> {
+                            val body = response.body?.string() ?: ""
+                            Log.d("OkHttpRedirect", "Response Body: $body")
+
+                            val extractedRate = extractDealBasR(body, "USD")?.replace(",", "") ?: "데이터 오류"
+                            exchangeRate = extractDealBasR(body, "USD")?.replace(",", "")?.toDoubleOrNull() ?: 0.0
+                            Log.d("OkHttpRedirect", "Rate : $exchangeRate")
+                            withContext(Dispatchers.Main) {
+                                binding.exchangeRateDisplay.text = "1달러 당 $extractedRate 원"
+                            }
+                            successful = true
+                        }
+                        else -> {
+                            Log.e("OkHttpRedirect", "Failed with code: $code")
+                            break
+                        }
+                    }
+                    response.close()
                 }
-                reader.close()
 
-                //JSON 문자열 출력
-                val jsonString = response.toString()
-                Log.d("getExchangeRate", "API 응답: $jsonString")
-
-                //필요한 값 추출(미국 환율)
-                exchangeRate = extractDealBasR(jsonString, "USD")!!.toInt()
-                Log.d("getExchangeRate", "ExchangeRate : $exchangeRate")
-
-                //UI 업데이트
-                requireActivity().runOnUiThread{
-                    binding.exchangeRateDisplay.text = "1달러 당 $exchangeRate 원"
+                if (redirectCount >= maxRedirects) {
+                    Log.e("OkHttpRedirect", "Too many redirects. Stopping.")
                 }
-            } else {
-                println("HTTP 요청 실패")
-                Log.d("getExchangeRate", "HTTP 요청 실패")
+            } catch (e: Exception) {
+                Log.e("OkHttpRedirect", "Unexpected error: ${e.message}")
+                e.printStackTrace()
             }
-
-            //연결 종료
-            connection.disconnect()
-        } catch (e: Exception) {
-            e.printStackTrace()
         }
     }
 
+    /**
+     * JSON 배열에서 특정 통화(currency)에 해당하는 "deal_bas_r" 값을 찾아 반환
+     */
     private fun extractDealBasR(jsonString: String, currency: String): String? {
-        val jsonArr = org.json.JSONArray(jsonString)
-        for (i in 0 until jsonArr.length()){
+        val jsonArr = JSONArray(jsonString)
+        for (i in 0 until jsonArr.length()) {
             val jsonObject = jsonArr.getJSONObject(i)
-            if (jsonObject.getString("cur_unit") == currency){
+            Log.d("OkHttpRedirect", "this : $i, $jsonObject")
+            Log.d("OkHttpRedirect", "this : ${jsonObject.getString("cur_unit")==currency}")
+            if (jsonObject.getString("cur_unit") == currency) {
+                Log.d("OkHttpRedirect", "correct : ${jsonObject.getString("deal_bas_r")}")
                 return jsonObject.getString("deal_bas_r")
             }
         }
         return null
     }
 
-
     override fun onDestroyView() {
         super.onDestroyView()
         _binding = null
     }
 
-    private fun setupListeners() {
-        // 원 입력 필드의 변경 감지
-        binding.wonInput.addTextChangedListener(object: TextWatcher{
-            override fun afterTextChanged(s: Editable?){
-                if (binding.wonInput.isFocused){
+    /**
+     * EditText에 TextWatcher 추가 설정
+     */
+    private fun setupTextWatchers() {
+        binding.wonInput.addTextChangedListener(object : TextWatcher {
+            override fun afterTextChanged(s: Editable?) {
+                if (binding.wonInput.isFocused) {
                     val wonValue = s.toString().toDoubleOrNull() ?: 0.0
                     val dollarValue = wonValue / exchangeRate
                     binding.dollarInput.setText(String.format("%.2f", dollarValue))
                 }
             }
 
-            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int){}
+            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {}
         })
 
-        // 달러 입력 필드의 변경 감지
-        binding.dollarInput.addTextChangedListener(object: TextWatcher {
+        binding.dollarInput.addTextChangedListener(object : TextWatcher {
             override fun afterTextChanged(s: Editable?) {
-                    if (binding.dollarInput.isFocused){
-                        val dollarValue = s.toString().toDoubleOrNull() ?: 0.0
-                        val wonValue = dollarValue * exchangeRate
-                        binding.wonInput.setText(String.format("%.0f", wonValue))
-                    }
+                if (binding.dollarInput.isFocused) {
+                    val dollarValue = s.toString().toDoubleOrNull() ?: 0.0
+                    val wonValue = dollarValue * exchangeRate
+                    binding.wonInput.setText(String.format("%.0f", wonValue))
+                }
             }
 
             override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {}
         })
+    }
+
+    /**
+     * SSL 인증서 검증을 비활성화한 OkHttpClient 생성
+     */
+    private fun getUnsafeOkHttpClient(): OkHttpClient {
+        return try {
+            val trustAllCerts = arrayOf<TrustManager>(
+                object : X509TrustManager {
+                    override fun checkClientTrusted(chain: Array<java.security.cert.X509Certificate>, authType: String) {}
+                    override fun checkServerTrusted(chain: Array<java.security.cert.X509Certificate>, authType: String) {}
+                    override fun getAcceptedIssuers(): Array<java.security.cert.X509Certificate> = arrayOf()
+                }
+            )
+            val sslContext = SSLContext.getInstance("SSL")
+            sslContext.init(null, trustAllCerts, java.security.SecureRandom())
+            val sslSocketFactory = sslContext.socketFactory
+
+            OkHttpClient.Builder()
+                .sslSocketFactory(sslSocketFactory, trustAllCerts[0] as X509TrustManager)
+                .hostnameVerifier { _, _ -> true }
+                .cookieJar(SimpleCookieJar())
+                .followRedirects(false)
+                .build()
+        } catch (e: Exception) {
+            throw RuntimeException(e)
+        }
     }
 }

@@ -39,6 +39,7 @@ android {
         viewBinding = true
         dataBinding = true
     }
+
 }
 
 dependencies {
@@ -59,6 +60,10 @@ dependencies {
     implementation(libs.room.runtime) // Room Runtime
     implementation(libs.room.ktx)    // Kotlin Extensions for Room
     implementation(libs.glide)
+    implementation(libs.okhttp)
+    implementation(libs.kotlinx.coroutines)
+    implementation(libs.retrofit)
+    implementation(libs.retrofitgson)
     kapt(libs.glidecompiler)
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
