@@ -17,7 +17,7 @@
         android:id="@+id/conversion_card"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="50dp"
+        android:layout_marginTop="30dp"
         android:layout_marginBottom="16dp"
         android:layout_marginLeft="16dp"
         android:layout_marginRight="16dp"
@@ -28,7 +28,7 @@
 
         <RelativeLayout
             android:layout_width="wrap_content"
-            android:layout_height="205dp"
+            android:layout_height="180dp"
             android:padding="16dp">
 
 
@@ -70,7 +70,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_below="@id/won_input"
-                android:layout_marginTop="40dp"
+                android:layout_marginTop="32dp"
                 android:gravity="center"
                 android:text="1달러 당 N원"
                 android:textColor="#3DA5F6"
@@ -93,7 +93,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="8dp"
-        android:layout_marginBottom="16dp"
+        android:layout_marginBottom="8dp"
         android:layout_marginLeft="16dp"
         android:layout_marginRight="16dp"
         android:layout_centerHorizontal="true"
@@ -104,8 +104,8 @@
 
         <RelativeLayout
             android:layout_width="match_parent"
-            android:layout_height="64dp"
-            android:padding="16dp">
+            android:layout_height="50dp"
+            android:padding="8dp">
 
             <TextView
                 android:layout_width="match_parent"
@@ -123,7 +123,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="8dp"
-        android:layout_marginBottom="16dp"
+        android:layout_marginBottom="8dp"
         android:layout_marginLeft="16dp"
         android:layout_marginRight="16dp"
         android:layout_centerHorizontal="true"
@@ -134,8 +134,8 @@
 
         <RelativeLayout
             android:layout_width="match_parent"
-            android:layout_height="64dp"
-            android:padding="16dp">
+            android:layout_height="50dp"
+            android:padding="8dp">
 
             <TextView
                 android:layout_width="match_parent"
@@ -153,7 +153,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="8dp"
-        android:layout_marginBottom="16dp"
+        android:layout_marginBottom="8dp"
         android:layout_marginLeft="16dp"
         android:layout_marginRight="16dp"
         android:layout_centerHorizontal="true"
@@ -164,8 +164,8 @@
 
         <RelativeLayout
             android:layout_width="match_parent"
-            android:layout_height="64dp"
-            android:padding="16dp">
+            android:layout_height="50dp"
+            android:padding="8dp">
 
             <TextView
                 android:layout_width="match_parent"
