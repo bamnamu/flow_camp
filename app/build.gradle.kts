@@ -64,6 +64,7 @@ dependencies {
     implementation(libs.kotlinx.coroutines)
     implementation(libs.retrofit)
     implementation(libs.retrofitgson)
+    implementation(libs.viewpager2)
     kapt(libs.glidecompiler)
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
