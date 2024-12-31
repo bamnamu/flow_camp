@@ -22,20 +22,9 @@ class HelplineAdapter(private val itemList: List<HelplineModel>): RecyclerView.A
         @SuppressLint("SetTextI18n")
         fun bind(helpline: HelplineModel){
             //1) 이미지, 타이틀, 연락처, bullet list 설정
-            binding.helplineImage.setImageResource(helpline.imageResId)
             binding.helplineTitle.text = helpline.title
             binding.helplineContact.text = helpline.contact
-
-            //bullet list 동적으로 생성
-            binding.helplineBulletList.removeAllViews()
-            helpline.bulletList.forEach{bullet ->
-                val bulletTextView = TextView(binding.root.context).apply {
-                    text = "\u2022 $bullet"
-                    textSize = 14f
-                    setPadding(0, 4, 0, 4)
-                }
-                binding.helplineBulletList.addView(bulletTextView)
-            }
+            binding.helplineBulletList.text = helpline.bulletList
 
             //2) 아이템 클릭 리스터 (전화 걸기 팝업)
             binding.root.setOnClickListener{
@@ -81,30 +70,6 @@ class HelplineAdapter(private val itemList: List<HelplineModel>): RecyclerView.A
             //Dialog 표시 (??)
             dialog.show()
         }
-/*
-        private fun showDialPopup(contact: String) {
-            AlertDialog.Builder(binding.root.context).apply {
-                setTitle("전화 걸기")
-                setMessage("이 번호로 전화 걸기 : $contact")
-
-                //[확인] 버튼 클릭 시
-                setPositiveButton("확인") { dialog, _ ->
-                    //전화 앱 실행(ACTION_DIAL)
-                    val intent = Intent(Intent.ACTION_DIAL).apply {
-                        //전화번호 문자열에서 공백, 특수문자 제거(권장)
-                        val cleanNumber = contact.replace("[^0-9]".toRegex(), "")
-                        data = Uri.parse("tel: $cleanNumber")
-                    }
-                    binding.root.context.startActivity(intent)
-                    dialog.dismiss()
-                }
-
-                //[취소] 버튼 클릭 시
-                setNegativeButton("취소") { dialog, _ ->
-                    dialog.dismiss()
-                }
-            }.show()
-        }*/
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): HelplineViewHolder {

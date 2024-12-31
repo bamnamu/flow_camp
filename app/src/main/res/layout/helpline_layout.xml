@@ -4,39 +4,27 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:padding="8dp"
+    android:padding="16dp"
     tools:context=".ui.home.HomeFragment"
     >
-
-    <!--왼쪽 이미지-->
-    <ImageView
-        android:id="@+id/helpline_image"
-        android:layout_width="64dp"
-        android:layout_height="64dp"
-        android:scaleType="centerCrop"
-        android:layout_alignParentStart="true"
-        android:contentDescription="Helpline Image Placeholder"
-        android:src="@drawable/ic_launcher_background"/>
 
     <!--제목-->
     <TextView
         android:id="@+id/helpline_title"
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginStart="8dp"
         android:textSize="20sp"
         android:textStyle="bold"
-        android:layout_toEndOf="@id/helpline_image"
+        android:layout_alignParentTop="true"
         android:fontFamily="@font/nanumgothic"/>
 
     <!--bullet list-->
-    <LinearLayout
+    <TextView
         android:id="@+id/helpline_bullet_list"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:orientation="vertical"
         android:layout_below="@id/helpline_title"
-        android:layout_toEndOf="@id/helpline_image"
         android:layout_marginStart="8dp"
         />
 
@@ -49,7 +37,6 @@
         android:textStyle="bold"
         android:layout_marginStart="8dp"
         android:layout_below="@id/helpline_bullet_list"
-        android:layout_toEndOf="@id/helpline_image"
         android:fontFamily="@font/cutenumber"/>
 
 
