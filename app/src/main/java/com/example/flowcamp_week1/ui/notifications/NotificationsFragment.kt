@@ -102,11 +102,11 @@ class NotificationsFragment : Fragment() {
                             } else {
                                 "$baseURL$location"
                             }
-
+                            /*
                             if (visitedUrls.contains(currentURL)) {
                                 Log.e("OkHttpRedirect", "Redirect loop detected. Stopping.")
                                 break
-                            }
+                            }*/
                             redirectCount++
                         }
                         code == 200 -> {
