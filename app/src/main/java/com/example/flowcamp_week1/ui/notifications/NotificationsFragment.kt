@@ -59,16 +59,132 @@ class NotificationsFragment : Fragment() {
         setupListeners()
         binding.exchangeRateDisplay.text = "1달러 당 $exchangeRate 원"
 
-        // 길이 변환 누르면 나타나도록
+        // 1) length_layout inflate + AlertDialog 생성 (단 한 번)
         val lenView = LayoutInflater.from(binding.root.context).inflate(R.layout.utilities_length_layout, null)
         val lenDialog = AlertDialog.Builder(binding.root.context).create()
         lenDialog.setView(lenView)
 
-        val lenButton = binding.conversionCardLength
-        lenButton.setOnClickListener{
+        //2) View 참조
+        val mInput = lenView.findViewById<EditText>(R.id.m_input)
+        val cmInput = lenView.findViewById<EditText>(R.id.cm_input)
+        val ftInput = lenView.findViewById<EditText>(R.id.ft_input)
+        val inInput = lenView.findViewById<EditText>(R.id.in_input)
+
+        //3) TextWatcher 설정
+        //cm 변경 감지
+        cmInput.addTextChangedListener(object: TextWatcher{
+            override fun afterTextChanged(s: Editable?) {
+                if (cmInput.isFocused){
+                    val cmValue = s.toString().toDoubleOrNull() ?:0.0
+//                    val mValue = cmValue / 100.0
+//                    val inValue = cmValue / 2.54
+//                    val ftValue = inValue / 12.0
+                    val mValue = mInput.text.toString().toDoubleOrNull() ?:0.0
+                    var inValue = (cmValue + mValue * 100) / 2.54
+                    val ftValue = (inValue/12).toInt()
+                    inValue = inValue - ftValue * 12
+
+
+                    //cm, m 모두 표시
+                    mInput.setText(String.format("%d", mValue.toInt()))
+                    //ft, in 모두 표시
+                    ftInput.setText(String.format("%d", ftValue))
+                    inInput.setText(String.format("%.2f", inValue))
+                }
+            }
+
+            override fun beforeTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {}
+            override fun onTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {}
+        })
+
+        //m 변경 감지
+        mInput.addTextChangedListener(object : TextWatcher{
+            override fun afterTextChanged(s: Editable?) {
+                if (mInput.isFocused){
+                    val mValue = s.toString().toDoubleOrNull() ?:0.0
+//
+//                    val cmValue = mValue * 100.0
+//                    val inValue = cmValue / 2.54
+//                    val ftValue = inValue / 12.0
+                    val cmValue = cmInput.toString().toDoubleOrNull() ?:0.0
+                    var inValue = (cmValue + mValue * 100) / 2.54
+                    val ftValue = (inValue/12).toInt()
+                    inValue = inValue - ftValue * 12
+
+
+
+                    //cm, m 모두 표시
+                    cmInput.setText(String.format("%.2f", cmValue))
+                    //ft, in 모두 표시
+                    ftInput.setText(String.format("%d", ftValue))
+                    inInput.setText(String.format("%.2f", inValue))
+                }
+            }
+
+            override fun beforeTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {}
+            override fun onTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {}
+        })
+
+        // in 변경 감지
+        inInput.addTextChangedListener(object : TextWatcher {
+            override fun afterTextChanged(s: Editable?) {
+                if (inInput.isFocused) {
+                    val inValue = s.toString().toDoubleOrNull() ?: 0.0
+
+//                    val cmValue = inValue * 2.54
+//                    val mValue = cmValue / 100.0
+//                    val ftValue = inValue / 12.0
+                    val ftValue = ftInput.toString().toDoubleOrNull() ?:0.0
+                    var cmValue = ftValue * 30.48 + inValue * 2.54
+                    val mValue = (cmValue / 100).toInt()
+                    cmValue = cmValue - mValue * 100
+
+                    //cm, m 모두 표시
+                    cmInput.setText(String.format("%.2f", cmValue))
+                    mInput.setText(String.format("%d", mValue))
+                    //ft 표시
+                    ftInput.setText(String.format("%d", ftValue.toInt()))
+                }
+            }
+
+            override fun onTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {}
+            override fun beforeTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {}
+        })
+
+        //ft 변경 감지
+        ftInput.addTextChangedListener(object : TextWatcher{
+            override fun afterTextChanged(s: Editable?) {
+                if (ftInput.isFocused){
+                    val ftValue = s.toString().toDoubleOrNull() ?:0.0
+
+//                    val inValue = ftValue * 12.0
+//                    val cmValue = inValue * 2.54
+//                    val mValue = cmValue / 100.0
+                    val inValue = inInput.toString().toDoubleOrNull() ?:0.0
+                    var cmValue = ftValue * 30.48 + inValue * 2.54
+                    val mValue = (cmValue / 100).toInt()
+                    cmValue = cmValue - mValue * 100
+
+                    cmInput.setText(String.format("%.2f", cmValue))
+                    mInput.setText(String.format("%d", mValue))
+                    inInput.setText(String.format("%.2f", inValue))
+                }
+            }
+
+            override fun onTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {}
+            override fun beforeTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {}
+        })
+
+        //4) 버튼 클릭 시 dialog.show()
+        binding.conversionCardLength.setOnClickListener{
             lenDialog.show()
-            setupLengthListeners()
         }
+
+//        val lenButton = binding.conversionCardLength
+//        lenButton.setOnClickListener{
+//            lenDialog.show()
+//            setupLengthListeners()
+//        }
 
         return root
     }
@@ -236,45 +352,6 @@ class NotificationsFragment : Fragment() {
                 Log.d("getExchangeRate", "response: $response")
             }
 
-/*
-            val connection = url.openConnection() as HttpURLConnection
-            connection.requestMethod = "GET"
-            connection.connectTimeout = 5000 // 연결 타임아웃
-            connection.readTimeout = 5000 // 읽기 타임아웃
-
-            //응답 코드 확인
-            val responseCode = connection.responseCode
-            Log.d("getExchangeRate", "responseCode: $responseCode")
-            if (responseCode == HttpURLConnection.HTTP_OK){
-                val reader = BufferedReader(InputStreamReader(connection.inputStream))
-                val response = StringBuilder()
-                var line: String?
-
-                while (reader.readLine().also { line = it } != null) {
-                    response.append(line)
-                }
-                reader.close()
-
-                //JSON 문자열 출력
-                val jsonString = response.toString()
-                Log.d("getExchangeRate", "API 응답: $jsonString")
-
-                //필요한 값 추출(미국 환율)
-                exchangeRate = extractDealBasR(jsonString, "USD")!!.toInt()
-                Log.d("getExchangeRate", "ExchangeRate : $exchangeRate")
-
-                //UI 업데이트
-                requireActivity().runOnUiThread{
-                    binding.exchangeRateDisplay.text = "1달러 당 $exchangeRate 원"
-                }
-            } else {
-                println("HTTP 요청 실패")
-                Log.d("getExchangeRate", "HTTP 요청 실패")
-            }
-
-            //연결 종료
-            connection.disconnect()
-            */
 
         } catch (e: Exception) {
             e.printStackTrace()
