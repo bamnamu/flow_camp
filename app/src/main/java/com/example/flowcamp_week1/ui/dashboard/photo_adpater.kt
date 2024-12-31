@@ -4,6 +4,7 @@ import android.net.Uri
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.CheckBox
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
@@ -15,13 +16,17 @@ import java.io.File
 class PhotoAdapter(
     private val photoList: List<tab2_data_tree>,
     private val onPhotoClick: (tab2_data_tree) -> Unit,
-    private val onPhotoLongClick: (tab2_data_tree) -> Unit
+    private val onPhotoLongClick: (tab2_data_tree) -> Unit,
+    private val isMultiSelectMode: Boolean, // 다중 선택 모드 여부
+    private val selectedItems: Set<Int>, // 선택된 항목의 ID
+    private val onItemSelected: (Int, Boolean) -> Unit // 선택 상태 변경 콜백
 ) : RecyclerView.Adapter<PhotoAdapter.PhotoViewHolder>() {
 
     class PhotoViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         val imageView: ImageView = itemView.findViewById(R.id.imageView)
         val textView: TextView = itemView.findViewById(R.id.textView)
         val extraInfoView: TextView = itemView.findViewById(R.id.textViewExtraInfo) // extrainfo 추가
+        val checkBox: CheckBox = itemView.findViewById(R.id.checkBox) // 체크박스 추가
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): PhotoViewHolder {
@@ -56,24 +61,34 @@ class PhotoAdapter(
 
         if (photo.extrainfo == "여행유의") {
             holder.extraInfoView.setBackgroundResource(R.drawable.tab2_blue_border) // 남색 테두리
-        }
-        else if(photo.extrainfo=="여행안전") {
+        } else if (photo.extrainfo == "여행안전") {
             holder.extraInfoView.setBackgroundResource(R.drawable.tab2_white_border)
-        }
-        else {
+        } else {
             holder.extraInfoView.setBackgroundResource(0) // 기본 배경
+        }
+
+        // 체크박스 처리
+        holder.checkBox.visibility = if (isMultiSelectMode) View.VISIBLE else View.GONE
+        holder.checkBox.isChecked = selectedItems.contains(photo.id)
+
+        holder.checkBox.setOnCheckedChangeListener { _, isChecked ->
+            onItemSelected(photo.id, isChecked)
         }
 
         // 클릭 이벤트 처리
         holder.itemView.setOnClickListener {
-            onPhotoClick(photo) // 클릭된 항목 데이터 전달
+            if (isMultiSelectMode) {
+                val isChecked = !holder.checkBox.isChecked
+                holder.checkBox.isChecked = isChecked
+                onItemSelected(photo.id, isChecked)
+            } else {
+                onPhotoClick(photo) // 일반 클릭 이벤트
+            }
         }
 
         // 꾹 누르기 이벤트 처리
         holder.itemView.setOnLongClickListener {
-            if (photo.parent_id != 0) { // parent_id == 0인 주 항목은 삭제 불가
-                onPhotoLongClick(photo)
-            }
+            onPhotoLongClick(photo)
             true
         }
     }
