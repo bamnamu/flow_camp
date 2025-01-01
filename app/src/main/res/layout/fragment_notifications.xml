@@ -45,7 +45,7 @@
             <!--            원 입력-->
             <EditText
                 android:id="@+id/won_input"
-                android:layout_width="wrap_content"
+                android:layout_width="100dp"
                 android:layout_height="wrap_content"
                 android:layout_alignParentStart="true"
                 android:layout_marginStart="26dp"
@@ -53,26 +53,39 @@
                 android:autofillHints="0"
                 android:background="@null"
                 android:gravity="top|start"
-                android:hint="원"
                 android:inputType="numberDecimal"
                 android:textSize="24sp" />
+
+            <TextView
+                android:id="@+id/won"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_toRightOf="@id/won_input"
+                android:text="원"
+                android:textSize="24sp"/>
 
             <!--            달러 입력-->
             <EditText
                 android:id="@+id/dollar_input"
-                android:layout_width="wrap_content"
+                android:layout_width="70dp"
                 android:layout_height="wrap_content"
-                android:layout_alignParentEnd="true"
                 android:layout_alignParentBottom="true"
                 android:layout_marginLeft="8dp"
-                android:layout_marginEnd="30dp"
-                android:layout_marginBottom="12dp"
+                android:layout_toLeftOf="@id/dollar"
                 android:autofillHints="0"
                 android:background="@null"
                 android:gravity="bottom|end"
-                android:hint="달러"
                 android:inputType="numberDecimal"
                 android:textSize="24sp" />
+
+            <TextView
+                android:id="@+id/dollar"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentBottom="true"
+                android:layout_alignParentRight="true"
+                android:text="달러"
+                android:textSize="24sp"/>
 
             <!--            구분선-->
             <TextView
