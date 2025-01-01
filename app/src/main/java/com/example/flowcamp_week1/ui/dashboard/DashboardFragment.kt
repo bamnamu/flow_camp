@@ -18,6 +18,7 @@ import com.example.flowcamp_week1.R
 import com.example.flowcamp_week1.databinding.FragmentDashboardBinding
 import com.example.flowcamp_week1.utils.*
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.activity.OnBackPressedCallback
 import kotlinx.serialization.json.Json
 import kotlinx.serialization.decodeFromString
 import kotlinx.serialization.encodeToString
@@ -71,16 +72,23 @@ class DashboardFragment : Fragment() {
         currentPhotoData = allPhotoData.filter { it.parent_id == 0 } // parent_id가 0인 주만 표시
         showPhotoData(currentPhotoData)
 
-        // 뒤로 가기 버튼 클릭 이벤트
-        binding.backButton.setOnClickListener {
-            if (isMultiSelectMode) {
-                disableMultiSelectMode()
-            } else if (parentDataStack.isNotEmpty()) {
-                currentPhotoData = parentDataStack.removeAt(parentDataStack.size - 1)
-                currentParentId = if (currentPhotoData.isNotEmpty()) currentPhotoData[0].parent_id else 0
-                showPhotoData(currentPhotoData)
+        // 핸드폰 뒤로가기 버튼 동작 설정
+        requireActivity().onBackPressedDispatcher.addCallback(viewLifecycleOwner, object : OnBackPressedCallback(true) {
+            override fun handleOnBackPressed() {
+                if (isMultiSelectMode) {
+                    disableMultiSelectMode() // 다중 선택 모드 비활성화
+                } else if (parentDataStack.isNotEmpty()) {
+                    // 이전 데이터로 돌아가기
+                    currentPhotoData = parentDataStack.removeAt(parentDataStack.size - 1)
+                    currentParentId = if (currentPhotoData.isNotEmpty()) currentPhotoData[0].parent_id else 0
+                    showPhotoData(currentPhotoData)
+                } else {
+                    // 더 이상 뒤로 갈 수 없을 경우 기본 동작 수행
+                    isEnabled = false
+                    requireActivity().onBackPressed()
+                }
             }
-        }
+        })
 
         // 추가 버튼 클릭 이벤트
         binding.addButton.setOnClickListener {
@@ -146,8 +154,8 @@ class DashboardFragment : Fragment() {
 
         // 뒤로 가기 및 추가 버튼 가시성 업데이트
         val isBackButtonVisible = parentDataStack.isNotEmpty()
-        binding.backButton.visibility = if (isBackButtonVisible || isMultiSelectMode) View.VISIBLE else View.GONE
-        binding.addButton.visibility = if (!isMultiSelectMode&&isBackButtonVisible) View.VISIBLE else View.GONE
+        binding.backButton.visibility = View.GONE
+        binding.addButton.visibility = if (!isMultiSelectMode && isBackButtonVisible) View.VISIBLE else View.GONE
         binding.actionButtons.visibility = if (isMultiSelectMode) View.VISIBLE else View.GONE
         Log.d("DashboardFragment", "$isMultiSelectMode")
     }
