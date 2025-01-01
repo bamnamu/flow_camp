@@ -135,7 +135,8 @@ class DashboardFragment : Fragment() {
                     toggleItemSelection(clickedItem.id)
                 }
             },
-            onPhotoLongClick = { enableMultiSelectMode() },
+            onPhotoLongClick = { enableMultiSelectMode()
+                Log.d("DashboardFragment", "롱클릭 이벤트 발생, 다중 선택 모드 활성화")},
             isMultiSelectMode = isMultiSelectMode,
             selectedItems = selectedItems,
             onItemSelected = { id, isSelected ->
@@ -148,6 +149,7 @@ class DashboardFragment : Fragment() {
         binding.backButton.visibility = if (isBackButtonVisible || isMultiSelectMode) View.VISIBLE else View.GONE
         binding.addButton.visibility = if (!isMultiSelectMode&&isBackButtonVisible) View.VISIBLE else View.GONE
         binding.actionButtons.visibility = if (isMultiSelectMode) View.VISIBLE else View.GONE
+        Log.d("DashboardFragment", "$isMultiSelectMode")
     }
 
     private fun saveImageToInternalStorage(uri: Uri, fileName: String): String {
@@ -244,12 +246,14 @@ class DashboardFragment : Fragment() {
     private fun enableMultiSelectMode() {
         isMultiSelectMode = true
         selectedItems.clear()
+        binding.recyclerView.adapter?.notifyDataSetChanged()
         showPhotoData(currentPhotoData)
     }
 
     private fun disableMultiSelectMode() {
         isMultiSelectMode = false
         selectedItems.clear()
+        binding.recyclerView.adapter?.notifyDataSetChanged()
         showPhotoData(currentPhotoData)
     }
 

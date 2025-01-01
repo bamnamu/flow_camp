@@ -47,15 +47,25 @@ class MainActivity : AppCompatActivity() {
         val adapter = ViewPagerAdapter(this, fragments)
         viewPager.adapter = adapter
 
-        // NavHostFragment 초기 상태 숨기기
+        // 초기 상태 설정
+        viewPager.currentItem = 0
+        navView.menu.getItem(0).isChecked = true
+        supportActionBar?.title = "Helplines" // 초기 제목 설정
         navHostFragment.visibility = View.GONE
 
-        // 슬라이드와 BottomNavigationView 동기화
+        // ViewPager2 슬라이드와 BottomNavigationView 동기화
         viewPager.registerOnPageChangeCallback(object : ViewPager2.OnPageChangeCallback() {
             override fun onPageSelected(position: Int) {
                 super.onPageSelected(position)
                 navHostFragment.visibility = View.GONE // ViewPager2 사용 중 NavHostFragment 숨기기
                 navView.menu.getItem(position).isChecked = true
+                // 페이지 전환 시 상단 제목 업데이트
+                supportActionBar?.title = when (position) {
+                    0 -> "Helplines"
+                    1 -> "Attractions"
+                    2 -> "Utilities"
+                    else -> "Utilities"
+                }
             }
         })
 
