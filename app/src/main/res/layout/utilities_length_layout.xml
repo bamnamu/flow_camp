@@ -6,7 +6,8 @@
     tools:context=".ui.notifications.NotificationsFragment"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:clipToPadding="false">
+    android:clipToPadding="false"
+    android:background="@android:color/transparent">
 
     <!--    카드 배경-->
     <androidx.cardview.widget.CardView
