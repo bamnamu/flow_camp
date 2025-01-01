@@ -41,6 +41,8 @@ import kotlin.math.min
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import javax.net.ssl.*
+import java.text.SimpleDateFormat
+import java.util.Calendar
 
 
 
@@ -54,6 +56,8 @@ class NotificationsFragment : Fragment() {
 
     // 임시 환율값. API 결과로 업데이트됨.
     private var exchangeRate = 1000.0
+
+    private var search_date=LocalDate.now()
 
     // OkHttpClient 인스턴스 생성 (SSL 검증 비활성화 포함)
     private val client: OkHttpClient by lazy { getUnsafeOkHttpClient() }
@@ -71,7 +75,7 @@ class NotificationsFragment : Fragment() {
         val root = binding.root
 
         // 환율 호출
-        fetchExchangeRate()
+        fetchExchangeRate(search_date, 5)
 
         // EditText TextWatcher 설정
         setupTextWatchers()
@@ -315,14 +319,13 @@ class NotificationsFragment : Fragment() {
      * 환율 API를 호출하여 최신 데이터를 가져오는 함수
      */
     @RequiresApi(Build.VERSION_CODES.O)
-    private fun fetchExchangeRate() {
+    private fun fetchExchangeRate(date: LocalDate, count: Int) {
         CoroutineScope(Dispatchers.IO).launch {
             val authKey = "GkWSnQO1HtS8mCK47jMqVaSra3htcuXj"
-            val searchDate = LocalDate.now().format(DateTimeFormatter.ofPattern("yyyyMMdd"))
+            val searchDate = date.format(DateTimeFormatter.ofPattern("yyyyMMdd"))
             val data = "AP01"
             val baseURL = "https://www.koreaexim.go.kr"
             var currentURL = "$baseURL/site/program/financial/exchangeJSON?authkey=$authKey&searchdate=$searchDate&data=$data"
-
             val visitedUrls = mutableSetOf<String>()
             var redirectCount = 0
             val maxRedirects = 10
@@ -370,6 +373,10 @@ class NotificationsFragment : Fragment() {
                             Log.d("OkHttpRedirect", "Response Body: $body")
 
                             val extractedRate = extractDealBasR(body, "USD")?.replace(",", "") ?: "데이터 오류"
+                            if(extractedRate=="데이터 오류" && count != 0){
+                                Log.d("OkHttpRedirect", "error")
+                                fetchExchangeRate(date.minusDays(1), count-1)
+                            }
                             exchangeRate = extractDealBasR(body, "USD")?.replace(",", "")?.toDoubleOrNull() ?: 0.0
                             Log.d("OkHttpRedirect", "Rate : $exchangeRate")
                             withContext(Dispatchers.Main) {

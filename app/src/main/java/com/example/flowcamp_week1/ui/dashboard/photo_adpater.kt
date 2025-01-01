@@ -1,6 +1,7 @@
 package com.example.flowcamp_week1.ui.dashboard
 
 import android.net.Uri
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -59,16 +60,16 @@ class PhotoAdapter(
         holder.textView.text = photo.description
         holder.extraInfoView.text = photo.extrainfo // extrainfo 표시
 
-        if (photo.extrainfo == "여행유의") {
-            holder.extraInfoView.setBackgroundResource(R.drawable.tab2_blue_border) // 남색 테두리
-        } else if (photo.extrainfo == "여행안전") {
-            holder.extraInfoView.setBackgroundResource(R.drawable.tab2_white_border)
-        } else {
-            holder.extraInfoView.setBackgroundResource(0) // 기본 배경
+        val cardBackground = holder.itemView.findViewById<View>(R.id.cardBackground)
+        when (photo.extrainfo) {
+            "여행유의" -> cardBackground.setBackgroundResource(R.drawable.tab2_blue_border) // 남색 테두리
+            "여행안전" -> cardBackground.setBackgroundResource(R.drawable.tab2_white_border) // 흰색 테두리
+            else -> cardBackground.setBackgroundResource(R.drawable.tab2_white_border) // 기본 배경
         }
 
         // 체크박스 처리
         holder.checkBox.visibility = if (isMultiSelectMode) View.VISIBLE else View.GONE
+        Log.d("DashboardFragment", "checkbox : $isMultiSelectMode")
         holder.checkBox.isChecked = selectedItems.contains(photo.id)
 
         holder.checkBox.setOnCheckedChangeListener { _, isChecked ->
@@ -88,8 +89,13 @@ class PhotoAdapter(
 
         // 꾹 누르기 이벤트 처리
         holder.itemView.setOnLongClickListener {
-            onPhotoLongClick(photo)
-            true
+            if(photo.parent_id!=0){
+                onPhotoLongClick(photo)
+                true
+            }
+            else{
+                false
+            }
         }
     }
 
