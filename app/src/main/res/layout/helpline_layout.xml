@@ -76,16 +76,6 @@
             android:layout_alignParentTop="true"
             android:fontFamily="@font/nanumgothic"/>
 
-        <!--bullet list-->
-        <TextView
-            android:id="@+id/helpline_bullet_list"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:orientation="vertical"
-            android:layout_below="@id/helpline_title"
-            android:layout_marginStart="8dp"
-            />
-
         <!--연락처-->
         <TextView
             android:id="@+id/helpline_contact"
@@ -94,9 +84,21 @@
             android:textSize="16sp"
             android:textStyle="bold"
             android:layout_marginStart="8dp"
-            android:layout_below="@id/helpline_bullet_list"
+            android:layout_marginEnd="8dp"
+            android:layout_below="@id/helpline_title"
+            android:layout_alignParentRight="true"
             android:fontFamily="@font/cutenumber"/>
 
+        <!--bullet list-->
+        <TextView
+            android:id="@+id/helpline_bullet_list"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:layout_below="@id/helpline_contact"
+            android:layout_alignParentRight="true"
+            android:layout_marginStart="8dp"
+            />
 
     </RelativeLayout>
 </androidx.cardview.widget.CardView>
