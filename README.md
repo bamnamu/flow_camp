@@ -23,10 +23,12 @@
 # Tab 1 : Helplines
 
 <p align="center">
-<img src=![Screenshot_20250101-195407_ 1](https://github.com/user-attachments/assets/d58562b0-b92f-4c8a-8cd9-6577c0f4cb2c) width="20%" height="30%">
-<img src=![Screenshot_20250101-195657_ 1](https://github.com/user-attachments/assets/f3b80de6-324e-4330-b068-317fa8a5d3b3) width="20%" height="30%">
-<img src=![Screenshot_20250101-195710_Contacts 1](https://github.com/user-attachments/assets/45a4c0d3-54b8-4cb9-972d-1a1361f53b9f) width="20%" height="30%">
+  <img src="https://github.com/user-attachments/assets/d58562b0-b92f-4c8a-8cd9-6577c0f4cb2c" width="30%">
+  <img src="https://github.com/user-attachments/assets/f3b80de6-324e-4330-b068-317fa8a5d3b3" width="30%">
+  <img src="https://github.com/user-attachments/assets/45a4c0d3-54b8-4cb9-972d-1a1361f53b9f" width="30%">
 </p>
+
+
 ![Screenshot_20250101-195407_ 1](https://github.com/user-attachments/assets/d58562b0-b92f-4c8a-8cd9-6577c0f4cb2c)
 ![Screenshot_20250101-195657_ 1](https://github.com/user-attachments/assets/f3b80de6-324e-4330-b068-317fa8a5d3b3)
 ![Screenshot_20250101-195710_Contacts 1](https://github.com/user-attachments/assets/45a4c0d3-54b8-4cb9-972d-1a1361f53b9f)
