@@ -29,11 +29,6 @@
 </p>
 
 
-![Screenshot_20250101-195407_ 1](https://github.com/user-attachments/assets/d58562b0-b92f-4c8a-8cd9-6577c0f4cb2c)
-![Screenshot_20250101-195657_ 1](https://github.com/user-attachments/assets/f3b80de6-324e-4330-b068-317fa8a5d3b3)
-![Screenshot_20250101-195710_Contacts 1](https://github.com/user-attachments/assets/45a4c0d3-54b8-4cb9-972d-1a1361f53b9f)
-
-
 
 기능
 
@@ -47,11 +42,12 @@
 
 # Tab 2 : Attractions
 
-![Screenshot_20250101-193255_[1].jpg](https://prod-files-secure.s3.us-west-2.amazonaws.com/f6cb388f-3934-47d6-9928-26d2e10eb0fc/5abc288e-ed5d-4fab-b082-dbef02ad6f98/Screenshot_20250101-193255_1.jpg)
+<p align="center">
+  <img src="https://github.com/user-attachments/assets/e47a28f6-dd98-4fd7-a3c4-4501c924d5ad" width="30%">
+  <img src="https://github.com/user-attachments/assets/e8d49f32-69df-4de1-827e-b8d0445e5fbf" width="30%">
+  <img src="https://github.com/user-attachments/assets/0e2de521-c746-48d8-ae29-6c34b6b56bda" width="30%">
+</p>
 
-![Screenshot_20250101-193309_ .jpg](https://prod-files-secure.s3.us-west-2.amazonaws.com/f6cb388f-3934-47d6-9928-26d2e10eb0fc/b4de762c-3ce5-4a98-98c9-d3a1fe367289/Screenshot_20250101-193309__.jpg)
-
-![Screenshot_20250101-193323_ .jpg](https://prod-files-secure.s3.us-west-2.amazonaws.com/f6cb388f-3934-47d6-9928-26d2e10eb0fc/3e2fd86c-168b-4e4c-8edb-d459eac44be0/Screenshot_20250101-193323__.jpg)
 
 - 각 주마다 사진, 이름, 여행 경보를 제공했습니다. 각 주의 항목은 `RecylcerView` 를 이용해 표현했습니다. 각 주의 테두리 색깔은 여행경보의 색깔로 했으며 여행경보가 없다면 회색을 사용했습니다.
     - 파랑 : 여행유의
