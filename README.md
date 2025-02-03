@@ -55,21 +55,23 @@
     - 적색 : 출국권고
     - 흑색 : 여행금지
 
-![Screenshot_20250101-193455_ .jpg](https://prod-files-secure.s3.us-west-2.amazonaws.com/f6cb388f-3934-47d6-9928-26d2e10eb0fc/1f3b8c48-3d57-4714-b602-d9aa290aa7cd/Screenshot_20250101-193455__.jpg)
+<p align="center">
+  <img src="https://github.com/user-attachments/assets/e9b6d989-a6b5-4fbe-9ef1-942c21dfff45" width="30%">
+  <img src="https://github.com/user-attachments/assets/07489e14-eaca-4c2a-908d-0c2d07bcab2b" width="30%">
+  <img src="https://github.com/user-attachments/assets/fa7981d1-704e-458c-8049-5ecb036d778d" width="30%">
+</p>
 
-![Screenshot_20250101-193721_ .jpg](https://prod-files-secure.s3.us-west-2.amazonaws.com/f6cb388f-3934-47d6-9928-26d2e10eb0fc/f248fe78-e0e1-4167-b593-2ceb06fa5a9e/Screenshot_20250101-193721__.jpg)
-
-![Screenshot_20250101-193726_ .jpg](https://prod-files-secure.s3.us-west-2.amazonaws.com/f6cb388f-3934-47d6-9928-26d2e10eb0fc/9e0c32a6-f2de-4e36-9d26-c53a7135ff11/Screenshot_20250101-193726__.jpg)
 
 - 각 주를 클릭하면 그 주의 관광지들을 볼 수 있는 페이지가 나옵니다. 추가 버튼이 있습니다. 각 관광지 항목도 `RecyclerView` 를 이용해 구현했습니다.
     - 핸드폰 뒤로가기 버튼을 누르면 `OnBackPressedDispatcher`을 이용하여 항상 전 단계로 돌아갑니다. 맨 처음 주들만 있는 항목에서는 앱이 꺼집니다.
     - 추가버튼을 누르면 갤러리에서 사진을 업로드할 수 있습니다. 사진(필수), 설명(필수), 주소(선택)을 입력하면 관광지 페이지에 업로드 할 수 있습니다.
-
-![Screenshot_20250101-201622_ .jpg](https://prod-files-secure.s3.us-west-2.amazonaws.com/f6cb388f-3934-47d6-9928-26d2e10eb0fc/8b5bdaf9-da4f-40e1-bcaa-e910f39378c5/Screenshot_20250101-201622__.jpg)
-
-![Screenshot_20250101-201608_ .jpg](https://prod-files-secure.s3.us-west-2.amazonaws.com/f6cb388f-3934-47d6-9928-26d2e10eb0fc/4ac999e7-ed92-4252-8329-2fe099c2b609/Screenshot_20250101-201608__.jpg)
-
-![Screenshot_20250101-201614_Android System.jpg](https://prod-files-secure.s3.us-west-2.amazonaws.com/f6cb388f-3934-47d6-9928-26d2e10eb0fc/2c1c88f6-39ff-4dfd-88f6-6988b5e2a4f6/Screenshot_20250101-201614_Android_System.jpg)
+ 
+ 
+ <p align="center">
+  <img src="https://github.com/user-attachments/assets/c6531b95-4c66-44bb-956a-46523683dce9" width="30%">
+  <img src="https://github.com/user-attachments/assets/b6f0e73f-37e8-4486-99e1-24b47fcdb63f" width="30%">
+  <img src="https://github.com/user-attachments/assets/9f158897-d164-4392-aeeb-da39249ee068" width="30%">
+</p>
 
 - 관광지 페이지에는 다음과 같은 기능 또한 있습니다.
     - 관광지 페이지의 항목을 누르면, 지도 검색을 하는지 묻는 창이 나옵니다. 취소를 누르면 돌아가고, 확인을 누르면 `Intent` 를 이용하여 구글 맵에 입력했던 주소로 검색이 됩니다.
@@ -78,13 +80,15 @@
 
 # Tab 3 : Utilities
 
-![Screenshot_20250101-200653_[1].jpg](https://prod-files-secure.s3.us-west-2.amazonaws.com/f6cb388f-3934-47d6-9928-26d2e10eb0fc/7dac0e09-cccd-4565-aed2-17bd9cdd1824/Screenshot_20250101-200653_1.jpg)
+<p align="center">
+  <img src="https://github.com/user-attachments/assets/5d7e2dcb-4949-4a01-8cd9-293b0bac3051" width="45%">
+  <img src="https://github.com/user-attachments/assets/15acfe7d-2b13-425f-9637-8295e3112500" width="45%">
+</p>
 
-![Screenshot_20250101-200927_[1].jpg](https://prod-files-secure.s3.us-west-2.amazonaws.com/f6cb388f-3934-47d6-9928-26d2e10eb0fc/2df37cb6-9864-4191-9e5c-acdcba885d6c/Screenshot_20250101-200927_1.jpg)
-
-![Screenshot_20250101-200938_ .jpg](https://prod-files-secure.s3.us-west-2.amazonaws.com/f6cb388f-3934-47d6-9928-26d2e10eb0fc/8cedc645-b2f6-43a7-962f-8b490005ae43/Screenshot_20250101-200938__.jpg)
-
-![Screenshot_20250101-201009_ .jpg](https://prod-files-secure.s3.us-west-2.amazonaws.com/f6cb388f-3934-47d6-9928-26d2e10eb0fc/3632a272-2240-4f90-9614-bcec124e036b/Screenshot_20250101-201009__.jpg)
+<p align="center">
+  <img src="https://github.com/user-attachments/assets/6b470add-424c-4040-b70f-b2671260bfb4" width="45%">
+  <img src="https://github.com/user-attachments/assets/96a20315-2880-4093-9ec2-9cbbe8757b3f" width="45%">
+</p>
 
 - 환율계산기를 구현하여 원을 입력하면 그에 해당하는 달러가, 달러를 입력하면 그에 해당하는 원이 나옵니다.
     - 한국 수출입 공사의 api를 `OkHttps`를 이용하여 사용해서 당일의 환율을 보여줍니다.
@@ -103,7 +107,6 @@
 
 # 발전 가능성
 
-- tab2의 뒤로가기, 추가, 공유, 삭제 버튼의 ui를 개선할 수 있습니다.
 - 원하는 주를 선택할 수 있도록 하여 더 구체적인 연락처 정보를 제공하도록 할 수 있습니다. 또한, 나라를 설정할 수 있도록 하여 나라별 연락처, 관광지, 단위 변환기를 할 수 있습니다.
 - 여행 경보 단계를 API를 통해 직접 불러오도록 할 수 있습니다.
 - 미국뿐만 아니라 일본, 중국등 다양한 국가로 발전시킬 수 있습니다.
